@@ -1,6 +1,6 @@
 # Rhythmic Partitioning Scripts
 
-This repository contains Rhythmic Partitioning Scripts (aka RP Scripts). This program is part of a paper written by [Marcos Sampaio](https://marcos.sampaio.me) and [Pauxy Gentil-Nunes](https://pauxy.net) and published at [Brazilian Journal of Music and Mathematics (MusMat)](https://musmat.org/musmat-journal/) [to be released on December 31st 2022]. The paper describes the RP Scripts' functionalities and operation.
+This repository contains Rhythmic Partitioning Scripts (aka RP Scripts). This program is part of a paper written by [Marcos Sampaio](https://marcos.sampaio.me) and [Pauxy Gentil-Nunes](https://pauxy.net) and published at [Brazilian Journal of Music and Mathematics (MusMat)](https://musmat.org/wp-content/uploads/2022/12/02-Sampaio-Gentil-Nunes-V6N2_2022.pdf). The paper describes the RP Scripts' functionalities and operation.
 
 RP Scripts are command-line Python scripts designed to extract rhythmic partitioning information from given digital music scores files, plot partitiogram and indexogram, and to create annotated digital music scores files.
 
