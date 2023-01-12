@@ -346,11 +346,12 @@ class ScoreSoundingMap(object):
     def add_score_sounding_maps(self, m21_score):
         # Get and fill measure offsets
         offset_map = m21_score.parts[0].offsetMap()
-        self.measure_offsets = {
-            om.element.number: make_fraction(om.element.offset)
-            for om in offset_map
-            if isinstance(om.element, music21.stream.Measure)
-        }
+        self.measure_offsets = {}
+
+        for om in offset_map:
+            if isinstance(om.element, music21.stream.Measure):
+                if om.element.number not in self.measure_offsets.keys():
+                    self.measure_offsets[om.element.number] = make_fraction(om.element.offset)
 
         # Get and fill sounding parts
         parts = m21_score.voicesToParts()
