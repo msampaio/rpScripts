@@ -130,9 +130,9 @@ Use `-t` to plot indexogram in stairs style:
 
 #### Combined style
 
-Use `-n` to plot indexogram in combined style:
+Use `-b` to plot indexogram in combined style:
 
-    python rpp.py -n score.csv
+    python rpp.py -b score.csv
 
 ![Indexogram as combined chart](examples/schumann-opus48no2-indexogram-combined.svg)
 
