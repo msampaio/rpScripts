@@ -34,6 +34,7 @@ def parse_index(v):
 
 
 def parse_pow(partition):
+    partition = str(partition)
     parts = partition.split('.')
     new_parts = []
     for part in parts:
