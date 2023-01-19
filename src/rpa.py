@@ -34,13 +34,14 @@ def simplify_csv(csv_fname):
     with open(csv_fname, 'r') as fp:
         i = 0
         for row in csv.reader(fp):
-            if i > 0:
-                if i == 1:
-                    last_row = row
-                if row[5] != last_row[5]:
-                    seq.append(last_row)
-                    last_row = row
-            i += 1
+            if row:
+                if i > 0:
+                    if i == 1:
+                        last_row = row
+                    if row[5] != last_row[5]:
+                        seq.append(last_row)
+                        last_row = row
+                i += 1
     return seq
 
 
