@@ -77,9 +77,10 @@ def aux_make_events_from_part(m21_part):
 
     for m21_measure in measures:
         notes_and_rests = m21_measure.notesAndRests
+        offset = 0 # manual calculation
         for m21_obj in notes_and_rests:
             m_event = MusicalEvent()
-            m_event.set_data_from_m21_obj(m21_obj, m21_measure.number, m21_measure.offset)
+            offset = m_event.set_data_from_m21_obj(m21_obj, m21_measure.number, m21_measure.offset, offset)
             events.update({
                 m_event.global_offset: m_event
             })
@@ -132,7 +133,6 @@ def aux_join_music_events(events):
                                 last_location = location
                             else: # note - note.continue or note.stop
                                 last_event.duration += current_event.duration
-                                pass
                         else:
                                 joined_events.update({last_location: last_event})
                                 last_event = current_event
@@ -165,6 +165,17 @@ def pretty_partition_from_list(seq):
     return partition
 
 
+def auxiliary_get_duration(m21_obj):
+    if m21_obj.duration.tuplets:
+        tup = m21_obj.duration.tuplets[0]
+        num = tup.numberNotesNormal
+        den = tup.numberNotesActual
+        dur = fractions.Fraction(num, den) / 2
+    else:
+        dur = make_fraction(m21_obj.duration.quarterLength)
+    return dur
+
+
 class CustomException(Exception):
     pass
 
@@ -188,11 +199,11 @@ class MusicalEvent(object):
     def is_rest(self):
         return self.m21_class == music21.note.Rest
 
-    def set_data_from_m21_obj(self, m21_obj, measure_number, measure_offset):
+    def set_data_from_m21_obj(self, m21_obj, measure_number, measure_offset, offset=None):
         self.measure_number = measure_number
-        self.offset = make_fraction(m21_obj.offset)
+        self.offset = offset
         self.global_offset = self.offset + make_fraction(measure_offset)
-        self.duration = make_fraction(m21_obj.duration.quarterLength)
+        self.duration = auxiliary_get_duration(m21_obj)
         self.m21_class = m21_obj.__class__
 
         if self.is_rest():
@@ -205,6 +216,7 @@ class MusicalEvent(object):
             if m21_obj.tie:
                 if m21_obj.tie.type in ['start', 'continue', 'stop']:
                     self.tie = m21_obj.tie.type
+        return offset + self.duration
 
 
 class SingleEvent(object):
