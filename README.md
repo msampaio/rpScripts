@@ -4,7 +4,7 @@ This repository contains Rhythmic Partitioning Scripts (aka RP Scripts). This pr
 
 RP Scripts are command-line Python scripts designed to extract rhythmic partitioning information from given digital music scores files, plot partitiogram and indexogram, and to create annotated digital music scores files.
 
-RP Scripts reads MusicXML (compressed or not) and Kern files and generates RP data in CSV files as well as partitioning charts.
+RP Scripts reads MusicXML (compressed or not), Kern, and MIDI files and generates RP data in CSV files as well as partitioning charts.
 
 ## Install
 
@@ -35,7 +35,7 @@ RPC processes the given digital score and returns a CSV file with partitions' in
 
     python rpc.py score.xml
 
-Since RPC uses Music21 library, it accepts MusicXML, MXL (compressed MusicXML) and Kern files as input.
+Since RPC uses Music21 library, it accepts MusicXML, MXL (compressed MusicXML), Kern and MIDI files as input.
 
 CSV file output contains:
 
