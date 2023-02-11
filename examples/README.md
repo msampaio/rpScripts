@@ -5,11 +5,13 @@ This folder contains file examples for RP scripts usage. The basis file, [schuma
 The folder contains:
 
 1. Input file (in MXL format, a compressed XML).
-2. CSV output file
-3. Partitiogram
-4. Indexogram
-5. Indexogram with closing vertical lines
-6. Indexogram as stem chart
-7. Indexogram as stairs chart
-8. Annotated file (in MXL)
-9. Annotated file (image example)
+1. CSV output file
+1. Simple Partitiogram
+1. Bubble Partitiogram
+1. Comparative Partitiogram
+1. Simple Indexogram
+1. Indexogram with closing vertical lines
+1. Indexogram as stem chart
+1. Indexogram as stairs chart
+1. Annotated file (in MXL)
+1. Annotated file (image example)

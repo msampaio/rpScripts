@@ -31,18 +31,18 @@ def main(csv_fname, txt_fname):
         df.loc[ind, 'Label'] = dic['label']
 
     df['Label'] = df.Label.fillna(method='ffill')
-    path = os.path.splitext(csv_fname)[0] + '-labelled.csv'
+    path = os.path.splitext(csv_fname)[0] + '-labeled.csv'
     df.to_csv(path)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-                    prog = 'rpp',
+                    prog = 'rpl',
                     description = "Annotate RPC's CSV output with labels.",
-                    epilog = 'Rhythmic Partitioning Labeller')
+                    epilog = 'Rhythmic Partitioning Labeler')
 
     parser.add_argument("-c", "--csv", help = "CSV filename.")
-    parser.add_argument("-t", "--txt", help = "TXT labelling schema.")
+    parser.add_argument("-t", "--txt", help = "TXT labeling schema.")
 
     args = parser.parse_args()
     csv_fname = args.csv
