@@ -17,7 +17,7 @@ If you are not familiar with Python and its libraries, follow these steps:
 1. Open a terminal (command prompt in Windows) and go to this repository's folder in your computer. For instance, `cd C:\Users\myName\rpScripts` (Windows) or `cd /Users/myName/rpScripts` (Mac).
 1. Install the libraries with Python's `PIP` program: `pip install -r requirements.txt`
 
-## Components and usage
+## Components and basic usage
 
 RP Scripts comprises four standalone scripts:
 
@@ -226,11 +226,57 @@ The labeled CSV looks like:
 10,2+7/4,2,7/4,5/2,1,4,4,6.0,0.0,One more label
 ```
 
+## Usage as package
+
+### RPC
+
+```python
+import music21
+import pandas
+
+# import RPScripts
+import src as rp
+
+# Generate Music21 score stream
+sco = music21.converter.parse('filename.mxl')
+texture = rp.Texture()
+texture.make_from_music21_score(sco)
+
+# Get partitions data as a dictionary
+dic = texture.get_data(equal_duration_events=True)
+
+# Generate Pandas Dataframe object and export to CSV.
+df = pandas.DataFrame(dic['data'], columns=dic['header'])
+df.to_csv('filename.csv')
+```
+
+### RPP
+
+```python
+import pandas
+
+# import RPScripts
+import src as rp
+
+# Use dataframe generated in the previous snippet.
+
+# Plot simple partitiogram (Jupyter)
+chart = rp.rpp.SimplePartitiogramPlotter(df)
+chart.plot()
+
+# Generate bubble partitiogram and save to "Mybubblechart" file
+chart2 = rp.rpp.BubblePartitiogramPlotter(df, basename='mybubblechart')
+chart2.plot()
+chart2.save()
+
+# Change default constant
+rp.rpp.LABELS_SIZE = 20
+```
+
 ## Bibliography
 
 1. Gentil-Nunes, Pauxy. 2009. "Análise Particional: uma Mediação entre Composição Musical e a Teoria das Partições." Ph.D. Dissertation, Universidade Federal do Estado do Rio de Janeiro.
 1. Sampaio, Marcos da Silva, and Pauxy Gentil-Nunes. 2022. "Python Scripts for Rhythmic Partitioning Analysis." *MusMat - Brazilian Journal of Music and Mathematics* 6 (2): 17-55. https://musmat.org/wp-content/uploads/2022/12/02-Sampaio-Gentil-Nunes-V6N2_2022.pdf.
-1. Sampaio, Marcos da Silva, Pauxy Gentil-Nunes, Sidnei Marques de Oliveira, Vicente Sanches de Oliveira, Jaderson Cardona de Oliveira. "New Visual Tools for Rhythmic Partitioning Analysis of Musical Texture." *Musica Theorica* 7 (2) (in press). https://revistamusicatheorica.tema.mus.br/.
 
 ## How to cite
 

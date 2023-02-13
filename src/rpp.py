@@ -1,8 +1,18 @@
 from fractions import Fraction
 import itertools
+import pickle
 from matplotlib import pyplot as plt
 import argparse
 import pandas
+
+
+# Constants
+RESOLUTION = 300
+MAXIMUM_POINTS_TO_LABEL = 50
+LABELS_SIZE = 15
+DISTANCE = 1.025
+COMPARISON_PARTITIOGRAM_SIZE = 3
+IMG_SIZE = list(map(lambda x: x*0.8, (8, 6)))
 
 
 POW_DICT = {
@@ -117,20 +127,29 @@ class AbstractPlotter(object):
         self.basename = basename
         self.outfile = '{}-{}.{}'.format(self.basename, self.name, self.image_format)
         self.name = None
+        self.subplots = None
 
     def plot(self):
-        pass
+        f = plt.subplot()
+        self.subplots = pickle.dumps(f)
+        return None
 
     def xticks_adjust(self):
         plt.xticks(rotation=90)
         plt.tight_layout()
 
-    def save(self):
+    def save(self, close_figure=True):
+        self.get_subplots()
         if self.image_format == 'svg':
             plt.savefig(self.outfile)
         else:
             plt.savefig(self.outfile, dpi=RESOLUTION)
-        plt.close()
+        if close_figure:
+            plt.close()
+
+    def get_subplots(self):
+        if self.subplots:
+            return pickle.loads(self.subplots)
 
 
 class AbstractPartitiogramPlotter(AbstractPlotter):
@@ -179,7 +198,7 @@ class SimplePartitiogramPlotter(AbstractPartitiogramPlotter):
                 v = s['Partition']
                 plt.text(x * factor, y * factor , v, fontsize=fontsize)
 
-        self.save()
+        return super().plot()
 
 
 class BubblePartitiogramPlotter(AbstractPartitiogramPlotter):
@@ -208,7 +227,7 @@ class BubblePartitiogramPlotter(AbstractPartitiogramPlotter):
                 v = s['Partition']
                 plt.text(x * DISTANCE, y * DISTANCE , v, fontsize=LABELS_SIZE)
 
-        self.save()
+        return super().plot()
 
 
 class ComparativePartitiogramPlotter(AbstractPartitiogramPlotter):
@@ -286,8 +305,7 @@ class ComparativePartitiogramPlotter(AbstractPartitiogramPlotter):
 
         fig.set_size_inches(*IMG_SIZE)
 
-        self.save()
-
+        return super().plot()
 
 
 class SimpleIndexogramPlotter(AbstractIndexogramPlotter):
@@ -327,7 +345,7 @@ class SimpleIndexogramPlotter(AbstractIndexogramPlotter):
                 last_row = row
 
         self.xticks_adjust()
-        self.save()
+        return super().plot()
 
 
 class StemIndexogramPlotter(AbstractIndexogramPlotter):
@@ -350,7 +368,7 @@ class StemIndexogramPlotter(AbstractIndexogramPlotter):
         plt.legend(self.inverted_dataframe.columns)
 
         self.xticks_adjust()
-        self.save()
+        return super().plot()
 
 
 class StairsIndexogramPlotter(AbstractIndexogramPlotter):
@@ -373,7 +391,7 @@ class StairsIndexogramPlotter(AbstractIndexogramPlotter):
         plt.legend(self.inverted_dataframe.columns)
 
         self.xticks_adjust()
-        self.save()
+        return super().plot()
 
 
 class CombinedIndexogramPlotter(AbstractIndexogramPlotter):
@@ -390,7 +408,7 @@ class CombinedIndexogramPlotter(AbstractIndexogramPlotter):
         ax.set_xlabel('Positions (measure, offset)')
 
         self.xticks_adjust()
-        self.save()
+        return super().plot()
 
 
 class ComparativePartitiogramMaker(AbstractPartitiogramPlotter):
@@ -410,6 +428,10 @@ class ComparativePartitiogramMaker(AbstractPartitiogramPlotter):
     def plot(self):
         for plotter in self.plotters:
             plotter.plot()
+
+    def save(self):
+        for plotter in self.plotters:
+            plotter.save()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -473,27 +495,36 @@ if __name__ == '__main__':
         dataframe = make_dataframe(fname)
         basename = fname.rstrip('.csv')
 
+        ## Partitiograms
         if args.comparative_partitiogram:
-            ComparativePartitiogramMaker(dataframe, image_format, basename, with_labels).plot()
+            part_obj = ComparativePartitiogramMaker(dataframe, image_format, basename, with_labels)
         elif args.bubble_partitiogram or args.without_labels:
-            BubblePartitiogramPlotter(dataframe, image_format, basename, with_labels).plot()
+            part_obj = BubblePartitiogramPlotter(dataframe, image_format, basename, with_labels)
         else:
-            SimplePartitiogramPlotter(dataframe, image_format, basename).plot()
+            part_obj = SimplePartitiogramPlotter(dataframe, image_format, basename)
 
+        part_obj.plot()
+        part_obj.save()
+
+        ## Indexograms
+        ind_objs = []
         if args.all:
             for cls in indexogram_classes:
-                cls(dataframe, image_format, basename).plot()
+                ind_objs.append(cls(dataframe, image_format, basename))
         elif args.stem:
-            StemIndexogramPlotter(dataframe, image_format, basename).plot()
+            ind_objs.append(StemIndexogramPlotter(dataframe, image_format, basename))
         elif args.stairs:
-            StairsIndexogramPlotter(dataframe, image_format, basename).plot()
+            ind_objs.append(StairsIndexogramPlotter(dataframe, image_format, basename))
         elif args.combined:
-            CombinedIndexogramPlotter(dataframe, image_format, basename).plot()
+            ind_objs.append(CombinedIndexogramPlotter(dataframe, image_format, basename))
         else:
             close_bubbles = False
             if args.close_bubbles:
                 close_bubbles = True
-            SimpleIndexogramPlotter(dataframe, image_format, basename, close_bubbles).plot()
+            ind_objs.append(SimpleIndexogramPlotter(dataframe, image_format, basename, close_bubbles))
+        for ind_obj in ind_objs:
+            ind_obj.plot()
+            ind_obj.save()
 
     except:
         raise CustomException('Something wrong with given csv file.')
