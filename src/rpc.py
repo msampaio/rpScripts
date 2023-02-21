@@ -12,6 +12,8 @@ def get_number_combinations_pairs(n):
 
 
 def make_fraction(value):
+    '''Return a Fraction object from a given Fraction or float value.'''
+
     if isinstance(value, fractions.Fraction):
         return fractions.Fraction(int(value.numerator), int(value.denominator))
     else:
@@ -181,14 +183,21 @@ class CustomException(Exception):
 
 
 class MusicalEvent(object):
-    def __init__(self):
-        self.offset = 0
-        self.global_offset = 0
+    def __init__(self, **kwargs):
+        self.measure_number = None
+        self.offset = fractions.Fraction(0)
+        self.global_offset = fractions.Fraction(0)
         self.number_of_pitches = 0
         self.duration = 0
         self.tie = None
         self.m21_class = None
         self.is_null = False
+
+        if 'kwargs' in kwargs:
+            self.__dict__.update(kwargs['kwargs'])
+
+    def __eq__(self, __o: object) -> bool:
+        return self.__dict__ == __o.__dict__
 
     def __str__(self) -> str:
         return ' '.join(list(map(str, [self.number_of_pitches, self.duration,  self.tie])))
@@ -220,17 +229,26 @@ class MusicalEvent(object):
 
 
 class SingleEvent(object):
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.number_of_pitches = 0
-        self.duration = 0
+        self.duration = fractions.Fraction(0)
         self.measure_number = 0
-        self.offset = 0
+        self.offset = fractions.Fraction(0)
         self.sounding = False
         self.partition_info = []
 
+        if 'kwargs' in kwargs:
+            self.__dict__.update(kwargs['kwargs'])
+
+    def __eq__(self, __o: object) -> bool:
+        return self.__dict__ == __o.__dict__
+
+    def __repr__(self) -> str:
+        return '<SE ({}+{}) num={} dur={} snd={}>'.format(self.measure_number, self.offset, self.number_of_pitches, self.duration, self.sounding)
+
 
 class Parsema(object):
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.measure_number = None
         self.offset = None
         self.global_offset = None
@@ -238,6 +256,12 @@ class Parsema(object):
         self.single_events = []
         self.partition_info = []
         self.partition_pretty = ''
+
+        if 'kwargs' in kwargs:
+            self.__dict__.update(kwargs['kwargs'])
+
+    def __eq__(self, __o: object) -> bool:
+        return self.__dict__ == __o.__dict__
 
     def __repr__(self):
         return '<P: {} ({}, {}), dur {}>'.format(self.partition_pretty, self.measure_number, self.offset, self.duration)
@@ -286,9 +310,15 @@ class Parsema(object):
 
 
 class PartSoundingMap(object):
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.single_events = None
         self.attack_global_offsets = []
+
+        if 'kwargs' in kwargs:
+            self.__dict__.update(kwargs['kwargs'])
+
+    def __eq__(self, __o: object) -> bool:
+        return self.__dict__ == __o.__dict__
 
     def __str__(self):
         return len(self.single_events.keys())
@@ -339,10 +369,16 @@ class PartSoundingMap(object):
 
 
 class ScoreSoundingMap(object):
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.sounding_maps = []
         self.attacks = []
         self.measure_offsets = {}
+
+        if 'kwargs' in kwargs:
+            self.__dict__.update(kwargs['kwargs'])
+
+    def __eq__(self, __o: object) -> bool:
+        return self.__dict__ == __o.__dict__
 
     def __repr__(self):
         return '<SSM: {} maps, {} attacks>'.format(len(self.sounding_maps), len(self.attacks))
@@ -416,9 +452,15 @@ class ScoreSoundingMap(object):
 
 
 class Texture(object):
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.parsemae = []
         self._measure_offsets = {}
+
+        if 'kwargs' in kwargs:
+            self.__dict__.update(kwargs['kwargs'])
+
+    def __eq__(self, __o: object) -> bool:
+        return self.__dict__ == __o.__dict__
 
     def __repr__(self):
         return '<T: {} parsemae>'.format(len(self.parsemae))
