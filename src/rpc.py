@@ -178,6 +178,100 @@ def auxiliary_get_duration(m21_obj):
     return dur
 
 
+def split_part_chords(m21_part):
+    extra_part = music21.stream.Part()
+    measures = m21_part.getElementsByClass(music21.stream.Measure)
+    has_split_data = False
+    for measure in measures:
+        m = copy.deepcopy(measure)
+        m.elements = () # Remove original measure's elements
+
+        chords = measure.getElementsByClass(music21.chord.Chord)
+        for chord in chords:
+            ch_duration = chord.duration
+            ch_offset = chord.offset
+            ch_tie = chord.tie
+            if chord.tie:
+                # Add rests
+                if m.notesAndRests.stream():
+                    # TODO: do I need to add a rest?
+                    pass
+                else:
+                    dur = chord.offset
+                    rest = music21.note.Rest()
+                    rest.duration = music21.duration.Duration(dur)
+                    m.insert(0, rest)
+                old_obj_pitches = []
+                new_obj_pitches = []
+                new_obj_tie = None
+                for p in chord.pitches:
+                    if chord.getTie(p) == chord.tie:
+                        old_obj_pitches.append(p)
+                    else:
+                        new_obj_pitches.append(p)
+                        new_obj_tie = chord.getTie(p)
+
+                if len(new_obj_pitches) > 0:
+                    has_split_data = True
+                    chord.pitches = tuple(old_obj_pitches)
+
+                    # Handle old pitches
+                    if len(old_obj_pitches) == 1:
+                        active_site = chord.activeSite
+                        ind = chord.activeSite.index(chord)
+                        chord.activeSite.pop(ind)
+
+                        obj = music21.note.Note(old_obj_pitches[0])
+                        obj.duration = ch_duration
+                        obj.offset = ch_offset
+                        obj.tie = ch_tie
+                        active_site.insert(obj.offset, obj)
+
+                    # Handle new pitches
+                    if len(new_obj_pitches) == 1:
+                        # note = music21.note.Note(p)
+                        note = music21.note.Note(new_obj_pitches[0])
+                        note.duration = chord.duration
+                        note.offset = chord.offset
+                        m.insert(note.offset, note)
+                    else:
+                        new_chord = music21.chord.Chord()
+                        new_chord.duration = chord.duration
+                        new_chord.offset = chord.offset
+                        new_chord.tie = new_obj_tie
+                        for p in new_obj_pitches:
+                            new_chord.pitches.append(p)
+                        m.insert(new_chord.offset, new_chord)
+
+        extra_part.insert(m.offset, m)
+
+    if has_split_data:
+        ms = extra_part.getElementsByClass(music21.stream.Measure)
+        for m in ms:
+            original_m = m21_part.measure(m.number)
+            m.offset = original_m.offset
+            m.duration = original_m.duration
+        return extra_part
+
+
+def split_score(sco):
+    parts = []
+    sco = music21.converter.parse(fname)
+    new_sco = music21.stream.Score()
+
+    for m21_part in sco.parts:
+        for _part in m21_part.voicesToParts():
+            new_part = copy.deepcopy(_part)
+            extra = split_part_chords(new_part)
+            new_sco.insert(0, new_part)
+            parts.append(new_part)
+            if extra:
+                new_sco.insert(0, extra)
+                parts.append(extra)
+
+    return new_sco
+
+
 class CustomException(Exception):
     pass
 
@@ -402,10 +496,9 @@ class ScoreSoundingMap(object):
                     self.measure_offsets[om.element.number] = make_fraction(om.element.offset)
 
         # Get and fill sounding parts
-        parts = m21_score.voicesToParts()
-
-        for m21_part in parts:
-            self.add_part_sounding_map(m21_part)
+        for m21_part in m21_score.parts:
+            for _part in m21_part.voicesToParts():
+                self.add_part_sounding_map(copy.deepcopy(_part))
 
     def get_single_events_by_location(self, global_offset):
         single_events = []
@@ -563,7 +656,8 @@ if __name__ == '__main__':
 
     print('Running script on {} filename...'.format(fname))
     try:
-        sco = music21.converter.parse(fname)
+        _sco = music21.converter.parse(fname)
+        sco = split_score(_sco)
     except:
         raise CustomException('File must be XML or KRN.')
 
