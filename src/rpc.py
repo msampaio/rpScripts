@@ -193,10 +193,7 @@ def split_part_chords(m21_part):
             ch_tie = chord.tie
             if chord.tie:
                 # Add rests
-                if m.notesAndRests.stream():
-                    # TODO: do I need to add a rest?
-                    pass
-                else:
+                if not m.notesAndRests.stream():
                     dur = chord.offset
                     rest = music21.note.Rest()
                     rest.duration = music21.duration.Duration(dur)
