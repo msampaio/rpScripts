@@ -10,8 +10,8 @@ import pandas
 RESOLUTION = 300
 MAXIMUM_POINTS_TO_LABEL = 50
 LABELS_SIZE = 15
-DISTANCE = 1.025
-COMPARISON_PARTITIOGRAM_SIZE = 3
+LABELS_DISTANCE = 1.025
+DOTS_SIZE = 15
 IMG_SIZE = list(map(lambda x: x*0.8, (8, 6)))
 
 
@@ -181,22 +181,20 @@ class SimplePartitiogramPlotter(AbstractPartitiogramPlotter):
     def plot(self):
         df = self._make_dataframe()
         plt.clf()
-        ax = df.plot(
+        df.plot(
             grid=True,
             kind='scatter',
             x='Agglomeration',
             y='Dispersion',
+            s=DOTS_SIZE,
         )
 
         if self.with_labels:
-            factor = 1.025
-            fontsize = 12
-
             for _, s in df.iterrows():
                 x = s['Agglomeration']
                 y = s['Dispersion']
                 v = s['Partition']
-                plt.text(x * factor, y * factor , v, fontsize=fontsize)
+                plt.text(x * LABELS_DISTANCE, y * LABELS_DISTANCE , v, fontsize=LABELS_SIZE)
 
         return super().plot()
 
@@ -212,7 +210,7 @@ class BubblePartitiogramPlotter(AbstractPartitiogramPlotter):
         df['Quantity'] = df['Quantity'] * self.bubble_size / df['Quantity'].sum()
 
         plt.clf()
-        ax = df.plot(
+        df.plot(
             grid=True,
             kind='scatter',
             x='Agglomeration',
@@ -225,7 +223,7 @@ class BubblePartitiogramPlotter(AbstractPartitiogramPlotter):
                 x = s['Agglomeration']
                 y = s['Dispersion']
                 v = s['Partition']
-                plt.text(x * DISTANCE, y * DISTANCE , v, fontsize=LABELS_SIZE)
+                plt.text(x * LABELS_DISTANCE, y * LABELS_DISTANCE , v, fontsize=LABELS_SIZE)
 
         return super().plot()
 
@@ -287,7 +285,7 @@ class ComparativePartitiogramPlotter(AbstractPartitiogramPlotter):
                 y='Dispersion',
                 data=grp,
                 label=n,
-                s=COMPARISON_PARTITIOGRAM_SIZE,
+                s=DOTS_SIZE,
                 c=colors.pop(),
             )
 
@@ -296,7 +294,7 @@ class ComparativePartitiogramPlotter(AbstractPartitiogramPlotter):
                 x = s['Agglomeration']
                 y = s['Dispersion']
                 v = s['Partition']
-                plt.text(x * DISTANCE, y * DISTANCE , v, fontsize=LABELS_SIZE)
+                plt.text(x * LABELS_DISTANCE, y * LABELS_DISTANCE , v, fontsize=LABELS_SIZE)
 
         plt.grid()
         plt.xlabel('Agglomeration')
@@ -451,9 +449,9 @@ if __name__ == '__main__':
     parser.add_argument("-t", "--stairs", help = "Indexogram as a stair chart", action='store_true')
     parser.add_argument("-b", "--combined", help = "Indexogram as a combination of aglomeration and dispersion", action='store_true')
     parser.add_argument("--maximum_points_to_label", help = "Maximum number of points to label in bubble partitiogram chart. Default=50", default=50)
-    parser.add_argument("--labels_size", help = "Labels size in bubble partitiogram chart. Default=15", default=15)
-    parser.add_argument("--labels_distance", help = "Distance between points and labels in bubble partitiogram chart. Default=1.025", default=1.025)
-    parser.add_argument("--comparative_partitiogram_size", help = "Distance between points and labels in bubble partitiogram chart. Default=3", default=3)
+    parser.add_argument("--dots_size", help = "Dots size in simple partitiogram chart. Default=15", default=15)
+    parser.add_argument("--labels_size", help = "Labels size in partitiogram chart. Default=15", default=15)
+    parser.add_argument("--labels_distance", help = "Distance between points and labels in partitiogram chart. Default=1.025", default=1.025)
     args = parser.parse_args()
 
     try:
@@ -463,9 +461,9 @@ if __name__ == '__main__':
 
     # Constants
     MAXIMUM_POINTS_TO_LABEL = float(args.maximum_points_to_label)
+    DOTS_SIZE = float(args.dots_size)
     LABELS_SIZE = float(args.labels_size)
-    DISTANCE = float(args.labels_distance)
-    COMPARISON_PARTITIOGRAM_SIZE = float(args.comparative_partitiogram_size)
+    LABELS_DISTANCE = float(args.labels_distance)
     IMG_SIZE = list(map(lambda x: x*0.8, (8, 6)))
 
     close_bubbles = args.close_bubbles
