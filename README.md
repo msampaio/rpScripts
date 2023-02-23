@@ -101,6 +101,22 @@ When an image format such as JPG or PNG is defined use `-r` to set its resolutio
 
 #### Partitiogram options
 
+Use `--maximum_points_to_label` to set the maximum number of points to label in the partitiogram charts. Default is 50:
+
+    python rpp.py --maximum_points_to_label 20 -u score.csv
+
+Use `--labels_size` to set labels' size in the partitiogram charts. Default is 15:
+
+    python rpp.py --labels_size 20 -u score.csv
+
+Use `--labels_distance` to set the distance between points and labels in the partitiogram charts. Default is 1.025:
+
+    python rpp.py --labels_distance 2 -u score.csv
+
+Use `--dots_size` to define the dots size in the partitiograms charts. Default is 15, but in the previous example, the value is set to 10:
+
+    python rpp.py --dots_size 10 -m score-labeled.csv
+
 ##### Bubble partitiogram
 
 Use `-u` to plot bubble partitiograms:
@@ -110,18 +126,6 @@ Use `-u` to plot bubble partitiograms:
 ![Partitiogram](examples/schumann-opus48no2-bubble-partitiogram.svg)
 
 *Bubble partitiogram*
-
-Use `--maximum_points_to_label` to set the maximum number of points to label in the bubble partitiogram chart. Default is 50:
-
-    python rpp.py --maximum_points_to_label 20 -u score.csv
-
-Use `--labels_size` to set labels' size in the bubble partitiogram chart. Default is 15:
-
-    python rpp.py --labels_size 20 -u score.csv
-
-Use `--labels_distance` to set the distance between points and labels in the bubble partitiogram chart. Default is 1.025:
-
-    python rpp.py --labels_distance 2 -u score.csv
 
 ##### Comparative partitiograms
 
@@ -135,9 +139,6 @@ RPP generates comparative partitiograms for all labels combination pairs.
 
 *Comparative partitiogram: parts A and B*
 
-Use `--comparative_partitiogram_size` to define the dots size in comparative partitiogram. Default is 3, but in the previous example, the value is set to 10:
-
-    python rpp.py --comparative_partitiogram_size 10 -m score-labeled.csv
 
 #### Indexogram options
 
