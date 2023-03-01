@@ -1,4 +1,5 @@
 import argparse
+from copy import deepcopy
 import csv
 import fractions
 import math
@@ -80,16 +81,17 @@ def main(sco, csv_fname, outfile):
 
     events_location = get_events_location(sco, csv_fname)
 
-    p0 = sco.parts[0]
+    new_sco = deepcopy(sco)
+
+    p0 = new_sco.parts[0]
     new_part = music21.stream.Stream()
     new_part.insert(0, music21.clef.PercussionClef())
 
     measures = {}
 
     for m in p0.getElementsByClass(music21.stream.Measure):
-        new_measure = music21.stream.Measure()
-        new_measure.number = m.number
-        new_measure.offset = m.offset
+        new_measure = deepcopy(m)
+        new_measure.elements = ()
         if m.number in events_location.keys():
             for _offset, partition in events_location[m.number]:
                 rest = music21.note.Rest(quarterLength=1/256)
@@ -107,8 +109,8 @@ def main(sco, csv_fname, outfile):
 
     new_part = new_part.makeRests(fillGaps=True)
 
-    sco.insert(0, new_part)
-    sco.write(fmt='xml', fp=outfile)
+    new_sco.insert(0, new_part)
+    new_sco.write(fmt='xml', fp=outfile)
 
 
 if __name__ == '__main__':
