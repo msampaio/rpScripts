@@ -226,7 +226,6 @@ def split_part_chords(m21_part):
 
                     # Handle new pitches
                     if len(new_obj_pitches) == 1:
-                        # note = music21.note.Note(p)
                         note = music21.note.Note(new_obj_pitches[0])
                         note.duration = chord.duration
                         note.offset = chord.offset
@@ -236,8 +235,10 @@ def split_part_chords(m21_part):
                         new_chord.duration = chord.duration
                         new_chord.offset = chord.offset
                         new_chord.tie = new_obj_tie
+                        new_chord_pitches = list(new_chord.pitches)
                         for p in new_obj_pitches:
-                            new_chord.pitches.append(p)
+                            new_chord_pitches.append(p)
+                        new_chord.pitches = tuple(new_chord_pitches)
                         m.insert(new_chord.offset, new_chord)
 
         extra_part.insert(m.offset, m)
@@ -638,7 +639,13 @@ class Texture(object):
         if equal_duration_events:
             return self._auxiliary_get_data_complete()
         else:
-            return self._auxiliary_get_data()
+            dic = self._auxiliary_get_data()
+            new_data = []
+            for row in dic['data']:
+                row[0] = '{}+{}'.format(str(row[1]), str(row[2]))
+                new_data.append(row)
+            dic['data'] = new_data
+            return dic
 
 
 if __name__ == '__main__':
@@ -647,9 +654,14 @@ if __name__ == '__main__':
                 description = 'Rhythmic Partitioning Calculator',
                 epilog = 'Rhythmic Partitioning Calculator')
     parser.add_argument('filename')
+    parser.add_argument('-e', '--equal_durations', help='Events with equal duration', action='store_true')
 
     args = parser.parse_args()
     fname = args.filename
+
+    equal_duration_events = True
+    if args.equal_durations:
+        equal_duration_events = False
 
     print('Running script on {} filename...'.format(fname))
     try:
@@ -660,7 +672,7 @@ if __name__ == '__main__':
 
     texture = Texture()
     texture.make_from_music21_score(sco)
-    dic = texture.get_data(equal_duration_events=True)
+    dic = texture.get_data(equal_duration_events=equal_duration_events)
 
     # Filename
     split_name = fname.split('.')
