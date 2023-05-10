@@ -1,75 +1,17 @@
-import argparse
+'''This module provides classes and functions to calculate the rhythmic partitions from a given digital score.'''
+
 import copy
-import csv
-import fractions
-import math
 import music21
-import numpy
+
+from fractions import Fraction
+from tqdm import tqdm
+
+from .lib.partition import Partition
+from .lib.base import CustomException, EventLocation, GeneralSubparser, RPData, file_rename, find_nearest_smaller, make_fraction
 
 
-def get_number_combinations_pairs(n):
-    return n * (n - 1) / 2
-
-
-def make_fraction(value):
-    '''Return a Fraction object from a given Fraction or float value.'''
-
-    if isinstance(value, fractions.Fraction):
-        return fractions.Fraction(int(value.numerator), int(value.denominator))
-    else:
-        a, b = value.as_integer_ratio()
-        return fractions.Fraction(int(a), int(b))
-
-
-def get_common_fractions_denominator(fractions_lst):
-    denominators = [fr.denominator for fr in fractions_lst]
-    return numpy.lcm.reduce(denominators)
-
-
-def get_common_denominator_from_list(seq):
-    diffs = [b - a for a, b in zip(seq, seq[1:])]
-    values = map(make_fraction, sorted(list(set(diffs))))
-    return fractions.Fraction(1, get_common_fractions_denominator(values))
-
-
-def find_nearest_smaller(value, seq):
-    if value < seq[0]:
-        return -1
-
-    if value > seq[-1]:
-        return seq[-1]
-
-    size = len(seq)
-
-    if size == 1 and value >= seq[0]:
-        return seq[0]
-
-    middle_pointer = math.floor(size/2)
-
-    left = seq[:middle_pointer]
-    right = seq[middle_pointer:]
-
-    if value < right[0]:
-        return find_nearest_smaller(value, left)
-    else:
-        return find_nearest_smaller(value, right)
-
-
-def auxiliary_find_interval(value, dic, i=0):
-    size = len(dic.keys())
-
-    if i > size - 1:
-        raise IndexError('Given index is out of dic')
-
-    keys = list(dic.keys())
-    while i < size - 1 and value >= dic[keys[i + 1]]:
-        i += 1
-
-    return keys[i], i
-
-
-def aux_make_events_from_part(m21_part):
-    '''Return a dictionary with location and Musical Events from a given
+def aux_make_events_from_part(m21_part: music21.stream.Part) -> dict:
+    '''Return a dictionary with Musical Events and their locations from a given
     Music21 part object.
     '''
 
@@ -90,7 +32,11 @@ def aux_make_events_from_part(m21_part):
     return events
 
 
-def aux_join_music_events(events):
+def aux_join_music_events(events: dict) -> dict:
+    '''Join `MusicalEvent`
+
+    This methods join adjacent tied objects as well as adjacent rests.
+    '''
 
     # Add null event at the end
     last_location = list(events.keys())[-1]
@@ -143,7 +89,7 @@ def aux_join_music_events(events):
     return joined_events
 
 
-def make_music_events_from_part(m21_part):
+def make_music_events_from_part(m21_part: music21.stream.Part) -> dict:
     '''Return a dictionary with location and Musical Events from a given
     Music21 part object. Adjacent rests and tied notes are joined.
     '''
@@ -152,41 +98,35 @@ def make_music_events_from_part(m21_part):
     return aux_join_music_events(events)
 
 
-def pretty_partition_from_list(seq):
-    if not seq:
-        return '0'
-    dic = {}
-    for el in seq:
-        if el not in dic.keys():
-            dic[el] = 0
-        dic[el] += 1
-    partition =  '.'.join([str(k) if v < 2 else '{}^{}'.format(k, v)
-        for k, v in sorted(dic.items())
-    ])
+def auxiliary_get_duration(m21_obj) -> Fraction:
+    '''Return the duration of the given Music21 object as a Fraction object.'''
 
-    return partition
-
-
-def auxiliary_get_duration(m21_obj):
     if m21_obj.duration.tuplets:
         tup = m21_obj.duration.tuplets[0]
         num = tup.numberNotesNormal
         den = tup.numberNotesActual
-        dur = fractions.Fraction(num, den) / 2
+        dur = Fraction(num, den) / 2
     else:
         dur = make_fraction(m21_obj.duration.quarterLength)
     return dur
 
 
-def split_part_chords(m21_part):
+def split_part_chords(m21_part: music21.stream.Part) -> music21.stream.Part:
+    '''Return a new Music21 Part object with pitches extracted from chords of a given Music21 Part object.
+
+    This function splits chords with notes of distinct durations.
+    '''
+
     extra_part = music21.stream.Part()
     measures = m21_part.getElementsByClass(music21.stream.Measure)
     has_split_data = False
+
     for measure in measures:
         m = copy.deepcopy(measure)
         m.elements = () # Remove original measure's elements
 
         chords = measure.getElementsByClass(music21.chord.Chord)
+
         for chord in chords:
             ch_duration = chord.duration
             ch_offset = chord.offset
@@ -201,6 +141,7 @@ def split_part_chords(m21_part):
                 old_obj_pitches = []
                 new_obj_pitches = []
                 new_obj_tie = None
+
                 for p in chord.pitches:
                     if chord.getTie(p) == chord.tie:
                         old_obj_pitches.append(p)
@@ -252,12 +193,20 @@ def split_part_chords(m21_part):
         return extra_part
 
 
-def split_score(sco):
+def split_score(filename: str) -> music21.stream.Score:
+    '''Parse a given digital score file, split chords, convert voices to parts and returns a new Music21 Score object.'''
+
     parts = []
-    sco = music21.converter.parse(fname)
+    try:
+        sco = music21.converter.parse(filename)
+    except:
+        raise CustomException('Error on given score parsing.')
+
     new_sco = music21.stream.Score()
 
-    for m21_part in sco.parts:
+    print('Parsing the given score...')
+
+    for m21_part in tqdm(sco.parts):
         for _part in m21_part.voicesToParts():
             new_part = copy.deepcopy(_part)
             extra = split_part_chords(new_part)
@@ -270,15 +219,37 @@ def split_score(sco):
     return new_sco
 
 
-class CustomException(Exception):
-    pass
+def make_offset_map(m21part: music21.stream.Part) -> dict:
+    '''Create map with measure number and global offset value.'''
+
+    aux_offset_map = {}
+    for measure in m21part.getElementsByClass(music21.stream.Measure):
+        number = measure.number
+        measure_offset = make_fraction(measure.offset)
+        if measure_offset not in aux_offset_map.keys():
+            aux_offset_map.update({measure_offset: number})
+
+    # Recalculate measure numbers for score fixing.
+    i = 0
+    new_offset_map = {}
+    for k, v in aux_offset_map.items():
+        if v == 1:
+            i += 1
+        new_offset_map[i] = k
+        i += 1
+    return new_offset_map
 
 
 class MusicalEvent(object):
+    '''Auxiliary musical event class.
+
+    This class has only the needed attributes of Music21's Note, Rest and Chord classes.
+    '''
+
     def __init__(self, **kwargs):
         self.measure_number = None
-        self.offset = fractions.Fraction(0)
-        self.global_offset = fractions.Fraction(0)
+        self.offset = Fraction(0)
+        self.global_offset = Fraction(0)
         self.number_of_pitches = 0
         self.duration = 0
         self.tie = None
@@ -298,9 +269,13 @@ class MusicalEvent(object):
         return '<E {}>'.format(self.__str__())
 
     def is_rest(self):
+        '''Check if the current object represents a music21' rest object.'''
+
         return self.m21_class == music21.note.Rest
 
     def set_data_from_m21_obj(self, m21_obj, measure_number, measure_offset, offset=None):
+        '''Get data from given Music21 object, set as current object's attributes, and return offset and duration.'''
+
         self.measure_number = measure_number
         self.offset = offset
         self.global_offset = self.offset + make_fraction(measure_offset)
@@ -321,13 +296,14 @@ class MusicalEvent(object):
 
 
 class SingleEvent(object):
+    '''Auxiliary single event. It's more simple than Music21's note and rest objects and has useful attributes such ass number of pitches and sounding.'''
+
     def __init__(self, **kwargs):
         self.number_of_pitches = 0
-        self.duration = fractions.Fraction(0)
+        self.duration = Fraction(0)
         self.measure_number = 0
-        self.offset = fractions.Fraction(0)
+        self.offset = Fraction(0)
         self.sounding = False
-        self.partition_info = []
 
         if 'kwargs' in kwargs:
             self.__dict__.update(kwargs['kwargs'])
@@ -336,18 +312,23 @@ class SingleEvent(object):
         return self.__dict__ == __o.__dict__
 
     def __repr__(self) -> str:
-        return '<SE ({}+{}) num={} dur={} snd={}>'.format(self.measure_number, self.offset, self.number_of_pitches, self.duration, self.sounding)
+        event_location = EventLocation(measure_number=self.measure_number, offset=self.offset)
+        ind = event_location.str_index
+        return '<SE () num={} dur={} snd={}>'.format(ind, self.number_of_pitches, self.duration, self.sounding)
 
 
 class Parsema(object):
+    '''Auxiliary Parsema class.
+
+    Parsema is the set of adjacent equal partitions. See Gentil-Nunes 2009 for further information.'''
+
     def __init__(self, **kwargs):
         self.measure_number = None
         self.offset = None
         self.global_offset = None
         self.duration = 0
         self.single_events = []
-        self.partition_info = []
-        self.partition_pretty = ''
+        self.partition = None
 
         if 'kwargs' in kwargs:
             self.__dict__.update(kwargs['kwargs'])
@@ -355,54 +336,48 @@ class Parsema(object):
     def __eq__(self, __o: object) -> bool:
         return self.__dict__ == __o.__dict__
 
-    def __repr__(self):
-        return '<P: {} ({}, {}), dur {}>'.format(self.partition_pretty, self.measure_number, self.offset, self.duration)
+    def __repr__(self) -> str:
+        partition_str = ''
+        if self.partition:
+            partition_str = self.partition.as_string()
+            event_loc = EventLocation(measure_number=self.measure_number, offset=self.offset)
+        return '<Pma: {} ({}), dur {}>'.format(partition_str, event_loc, self.duration)
 
-    def add_single_events(self, single_events):
+    def add_single_events(self, single_events: list) -> None:
+        '''Set single events, calculate their durations and set partition.'''
+
         self.single_events = single_events
         durations = [event.duration for event in single_events if event]
         if durations:
             self.duration = min(durations)
 
-        self.set_partition_info()
-        self.partition_pretty = pretty_partition_from_list(self.partition_info)
+        self.set_partition()
 
-    def set_partition_info(self):
-        partitions = {}
+    def set_partition(self) -> None:
+        '''Create `Partition` object from single events attribute and set it to `partition` attribute.'''
+
+        parts = {}
         number_of_pitches_set = set([
             s_event.number_of_pitches
             for s_event in self.single_events
         ])
         if list(number_of_pitches_set) == [0]:
-            return [0]
+            self.partition = Partition([0])
+            return
         for s_event in self.single_events:
             key = (s_event.sounding, s_event.duration)
-            if key not in partitions.keys() and s_event.number_of_pitches > 0:
-                partitions[key] = 0
+            if key not in parts.keys() and s_event.number_of_pitches > 0:
+                parts[key] = 0
             if s_event.number_of_pitches > 0:
-                partitions[key] += s_event.number_of_pitches
-        self.partition_info = sorted(partitions.values())
+                parts[key] += s_event.number_of_pitches
 
-    def get_density_number(self):
-        return int(sum(self.partition_info))
-
-    def count_binary_relations(self):
-        density_number = self.get_density_number()
-        return get_number_combinations_pairs(density_number)
-
-    def get_agglomeration_index(self):
-        if self.partition_info == []:
-            return None
-        return float(sum([get_number_combinations_pairs(n) for n in self.partition_info]))
-
-    def get_dispersion_index(self):
-        if self.partition_info == []:
-            return None
-        return float(self.count_binary_relations() - self.get_agglomeration_index())
+        self.partition = Partition(sorted(parts.values()))
 
 
 class PartSoundingMap(object):
-    def __init__(self, **kwargs):
+    '''Sounding Map class of a musical part.'''
+
+    def __init__(self, **kwargs) -> None:
         self.single_events = None
         self.attack_global_offsets = []
 
@@ -412,13 +387,17 @@ class PartSoundingMap(object):
     def __eq__(self, __o: object) -> bool:
         return self.__dict__ == __o.__dict__
 
-    def __str__(self):
+    def __str__(self) -> int:
         return len(self.single_events.keys())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<PSM: {} events>'.format(self.__str__())
 
-    def set_from_m21_part(self, m21_part):
+    def set_from_m21_part(self, m21_part: music21.stream.Part) -> None:
+        '''Set Music21's part elements into `single_events` attribute.
+
+        Create `MusicEvent` objects for each event and then, create `SingleEvent` objects to add to `single_events` attribute.'''
+
         music_events = make_music_events_from_part(m21_part)
         self.single_events = {}
         for global_offset, m_event in music_events.items():
@@ -437,7 +416,9 @@ class PartSoundingMap(object):
             })
             self.attack_global_offsets.append(closed_beginning)
 
-    def get_single_event_by_location(self, global_offset):
+    def get_single_event_by_location(self, global_offset: Fraction) -> SingleEvent:
+        '''Return a `SingleEvent` object from its location.'''
+
         beginning = find_nearest_smaller(global_offset, self.attack_global_offsets)
 
         if beginning == -1: # No event to return
@@ -461,7 +442,9 @@ class PartSoundingMap(object):
 
 
 class ScoreSoundingMap(object):
-    def __init__(self, **kwargs):
+    '''Sounding Map class of a musical score. Individual parts are sounding maps.'''
+
+    def __init__(self, **kwargs) -> None:
         self.sounding_maps = []
         self.attacks = []
         self.measure_offsets = {}
@@ -472,10 +455,12 @@ class ScoreSoundingMap(object):
     def __eq__(self, __o: object) -> bool:
         return self.__dict__ == __o.__dict__
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<SSM: {} maps, {} attacks>'.format(len(self.sounding_maps), len(self.attacks))
 
-    def add_part_sounding_map(self, m21_part):
+    def add_part_sounding_map(self, m21_part: music21.stream.Part) -> None:
+        '''Creates a `PartSoundingMap` from a given Music21 Part and add it to sounding_maps and attacks attributes.'''
+
         psm = PartSoundingMap()
         psm.set_from_m21_part(m21_part)
         if psm.single_events:
@@ -483,22 +468,23 @@ class ScoreSoundingMap(object):
             self.attacks.extend(psm.attack_global_offsets)
             self.attacks = sorted(set(self.attacks))
 
-    def add_score_sounding_maps(self, m21_score):
-        # Get and fill measure offsets
-        offset_map = m21_score.parts[0].offsetMap()
-        self.measure_offsets = {}
+    def add_score_sounding_maps(self, m21_score: music21.stream.Score) -> None:
+        '''Create `PartSoundingMap` objects from each part of a given Music21 Score.
 
-        for om in offset_map:
-            if isinstance(om.element, music21.stream.Measure):
-                if om.element.number not in self.measure_offsets.keys():
-                    self.measure_offsets[om.element.number] = make_fraction(om.element.offset)
+        This method also get measure offsets and explodes voices into parts.'''
+
+        # Get and fill measure offsets
+        self.measure_offsets = make_offset_map(m21_score.parts[0])
 
         # Get and fill sounding parts
-        for m21_part in m21_score.parts:
+        print('Getting and filling sounding parts...')
+        for m21_part in tqdm(m21_score.parts):
             for _part in m21_part.voicesToParts():
                 self.add_part_sounding_map(copy.deepcopy(_part))
 
-    def get_single_events_by_location(self, global_offset):
+    def get_single_events_by_location(self, global_offset: Fraction) -> list:
+        '''Return a list of `SingleEvent` objects in different sounding_maps from their locations.'''
+
         single_events = []
         for sounding_map in self.sounding_maps:
             s_event = sounding_map.get_single_event_by_location(global_offset)
@@ -506,7 +492,11 @@ class ScoreSoundingMap(object):
                 single_events.append(s_event)
         return single_events
 
-    def make_parsemae(self):
+    def make_parsemae(self) -> list:
+        '''Return a list of `Parsema` objects from `attacks` attribute.
+
+        This method also handles merged parsemae.'''
+
         parsemae = []
 
         offset_map = {ofs: ms for ms, ofs in self.measure_offsets.items()}
@@ -531,7 +521,7 @@ class ScoreSoundingMap(object):
         merged_parsemae = []
         first_parsema = parsemae[0]
         for parsema in parsemae[1:]:
-            if parsema.partition_info == first_parsema.partition_info:
+            if parsema.partition.parts == first_parsema.partition.parts:
                 first_parsema.duration += parsema.duration
             else:
                 merged_parsemae.append(first_parsema)
@@ -542,8 +532,10 @@ class ScoreSoundingMap(object):
         return merged_parsemae
 
 
-class Texture(object):
-    def __init__(self, **kwargs):
+class ParsemaeSegment(object):
+    '''Parsema segment class.'''
+
+    def __init__(self, **kwargs) -> None:
         self.parsemae = []
         self._measure_offsets = {}
 
@@ -553,136 +545,96 @@ class Texture(object):
     def __eq__(self, __o: object) -> bool:
         return self.__dict__ == __o.__dict__
 
-    def __repr__(self):
-        return '<T: {} parsemae>'.format(len(self.parsemae))
+    def __repr__(self) -> str:
+        return '<PS: {} parsemae>'.format(len(self.parsemae))
 
-    def make_from_music21_score(self, m21_score):
+    def make_from_music21_score(self, m21_score: music21.stream.Score) -> None:
+        '''Create `Parsema` objects fom given Music21 Score object and store at `parsemae` class attribute.'''
+
         ssm = ScoreSoundingMap()
         ssm.add_score_sounding_maps(m21_score)
         self.parsemae = ssm.make_parsemae()
         self._measure_offsets = ssm.measure_offsets
 
-    def _auxiliary_get_data(self):
-        columns = [
-            'Index', # 0
-            'Measure number', # 1
-            'Offset', # 2
-            'Global offset', # 3
-            'Duration', # 4
-            'Partition', # 5
-            'Density-number', # 6
-            'Agglomeration', # 7
-            'Dispersion', # 8
-        ]
-        data = []
+    def get_data(self) -> tuple:
+        '''Get partitions, agglomeration, and dispersion data and their locations.'''
+
+        data = {
+            'Index': [], # 0
+            'Measure number': [], # 1
+            'Offset': [], # 2
+            'Global offset': [], # 3
+            'Duration': [], # 4
+            'Partition': [], # 5
+            'Density-number': [], # 6
+            'Agglomeration': [], # 7
+            'Dispersion': [], # 8
+        }
+        values_map = {}
         for parsema in self.parsemae:
-            ind = tuple([parsema.measure_number, parsema.offset])
-            data.append([
-                ind,
-                parsema.measure_number,
-                parsema.offset,
-                parsema.global_offset,
-                parsema.duration,
-                parsema.partition_pretty,
-                parsema.get_density_number(),
-                parsema.get_agglomeration_index(),
-                parsema.get_dispersion_index(),
-            ])
-        dic = {
-            'header': columns,
-            'data': data
-        }
-        return dic
+            event_location = EventLocation(measure_number = parsema.measure_number, offset=parsema.offset)
+            partition = parsema.partition
 
-    def _auxiliary_get_data_complete(self):
-        # check indexes
-        auxiliary_dic = self._auxiliary_get_data()
-        data = auxiliary_dic['data']
-        data_map = {row[3]: row for row in data}
-        global_offsets = [row[3] for row in data]
-        common = make_fraction(get_common_denominator_from_list(global_offsets))
-        size = global_offsets[-1] + data[-1][4]
+            partition_str = partition.as_string()
+            agglomeration = partition.get_agglomeration_index()
+            dispersion = partition.get_dispersion_index()
 
-        new_data = []
-        current_global_offset = global_offsets[0]
-        last_row = data[0]
+            data['Index'].append(event_location.str_index)
+            data['Measure number'].append(parsema.measure_number)
+            data['Offset'].append(parsema.offset)
+            data['Global offset'].append(parsema.global_offset)
+            data['Duration'].append(parsema.duration)
+            # data['Offset'].append(fraction_to_string(parsema.offset))
+            # data['Global offset'].append(fraction_to_string(parsema.global_offset))
+            # data['Duration'].append(fraction_to_string(parsema.duration))
+            data['Partition'].append(partition_str)
+            data['Density-number'].append(partition.get_density_number())
+            data['Agglomeration'].append(agglomeration)
+            data['Dispersion'].append(dispersion)
 
-        measure_index = 0
-        while current_global_offset < size:
-            current_measure, measure_index = auxiliary_find_interval(current_global_offset, self._measure_offsets, measure_index)
+            if partition_str not in values_map.keys():
+                values_map[partition_str] = (agglomeration, dispersion)
+        return data, values_map
 
-            if current_global_offset in data_map:
-                row = copy.deepcopy(data_map[current_global_offset])
-                last_row = copy.deepcopy(row)
-            else:
-                row = copy.deepcopy(last_row)
-                row[2] = current_global_offset - self._measure_offsets[current_measure]
-                row[3] = current_global_offset
+    def make_rpdata(self, filename: str) -> RPData:
+        '''Return `RPData` object from `parsemae` class attribute.'''
 
-            row[0] = '{}+{}'.format(str(current_measure), str(row[2]))
-            row[1] = current_measure
-            new_data.append(row)
+        rpdata = RPData()
+        rpdata.path = file_rename(filename, 'json')
 
-            last_row = row
-            current_global_offset = make_fraction(current_global_offset + common)
+        offset_map_orig = self._measure_offsets # values as fractions
+        offset_map_conv = {mn: offset for mn, offset in offset_map_orig.items()} # values as strings
+        # offset_map_conv = {mn: fraction_to_string(offset) for mn, offset in offset_map_orig.items()} # values as strings
 
-        dic = {
-            'header': auxiliary_dic['header'],
-            'data': new_data,
-        }
-
-        return dic
-
-    def get_data(self, equal_duration_events=True):
-        '''Get parsemae data as dictionary with data and index. If only_parsema_list attribute is False, the data is filled with equal duration events.'''
-
-        if equal_duration_events:
-            return self._auxiliary_get_data_complete()
-        else:
-            dic = self._auxiliary_get_data()
-            new_data = []
-            for row in dic['data']:
-                row[0] = '{}+{}'.format(str(row[1]), str(row[2]))
-                new_data.append(row)
-            dic['data'] = new_data
-            return dic
+        rpdata.data, rpdata.values_map = self.get_data()
+        rpdata.partitions = rpdata.data['Partition']
+        rpdata.size = len(rpdata.partitions)
+        rpdata.offset_map = offset_map_conv
+        return rpdata
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-                prog = 'rpc',
-                description = 'Rhythmic Partitioning Calculator',
-                epilog = 'Rhythmic Partitioning Calculator')
-    parser.add_argument('filename')
-    parser.add_argument('-e', '--equal_durations', help='Events with equal duration', action='store_true')
+class Subparser(GeneralSubparser):
+    '''Implements argparser.'''
 
-    args = parser.parse_args()
-    fname = args.filename
+    def setup(self) -> None:
+        self.program_name = 'calc'
+        self.program_help = 'Calculator'
+        self.add_parent = False
 
-    equal_duration_events = True
-    if args.equal_durations:
-        equal_duration_events = False
+    def add_arguments(self) -> None:
+        self.parser.add_argument('filename', help='digital score filename (XML, MXL, MIDI and KRN)', type=str)
+        self.parser.add_argument('-c', '--csv', help='output data in a CSV file.', default=False, action='store_true')
+        self.parser.add_argument('-e', '--equally_sized', help='generate equally-sized events', default=False, action='store_true')
 
-    print('Running script on {} filename...'.format(fname))
-    try:
-        _sco = music21.converter.parse(fname)
-        sco = split_score(_sco)
-    except:
-        raise CustomException('File must be XML or KRN.')
+    def handle(self, args):
+        print('Running script on {} file...'.format(args.filename))
 
-    texture = Texture()
-    texture.make_from_music21_score(sco)
-    dic = texture.get_data(equal_duration_events=equal_duration_events)
+        sco = split_score(args.filename)
+        segment = ParsemaeSegment()
+        segment.make_from_music21_score(sco)
 
-    # Filename
-    split_name = fname.split('.')
-    if len(split_name) > 2:
-        base = '.'.join(split_name[:-1])
-    else:
-        base = split_name[0]
-    dest = base + '.csv'
+        rpdata = segment.make_rpdata(args.filename)
+        rpdata.save_to_file()
 
-    with open(dest, 'w') as fp:
-        csv_writer = csv.writer(fp, quoting=csv.QUOTE_NONNUMERIC)
-        csv_writer.writerow(dic['header'])
-        csv_writer.writerows(dic['data'])
+        if args.csv:
+            rpdata.save_to_csv(args.equally_sized)

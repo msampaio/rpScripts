@@ -1,0 +1,55 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rpscripts"
+version = "2.0"
+authors = [
+  { name="Marcos Sampaio", email="marcos@sampaio.me" },
+]
+description = "Rhythmic Partitioning Scripts"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+  "matplotlib >= 3.5",
+  "music21 >= 8.1.0",
+  "numpy >= 1.21.0",
+  "pandas >= 1.5.0",
+  "statsmodels >=0.13.0",
+  "graphviz >= 0.20.0",
+  "tdqm >= 4.65.0",
+  "networkx >= 3.0.0",
+]
+
+[tool.hatch.build]
+ignore-vcs = true
+only-packages = true
+exclude = [
+  "build",
+  "debugging",
+  "dist",
+  "docs",
+  "examples",
+  "old-docs",
+  "old-src",
+  "tests",
+]
+
+exclude-module = [
+  "alabaster",
+  "beautifulsoup4",
+  "jinja",
+  "jupyter",
+  "sphinx",
+  "sqlite",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/msampaio/rpscripts"
+"Bug Tracker" = "https://github.com/msampaio/rpscripts/issues"
