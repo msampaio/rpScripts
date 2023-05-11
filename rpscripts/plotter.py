@@ -3,9 +3,10 @@ from fractions import Fraction
 import itertools
 import pickle
 from matplotlib import pyplot as plt
+import numpy
 
 
-from .lib.base import CustomException, EventLocation, GeneralSubparser, RPData, clean_filename, file_rename, find_nearest_smaller, parse_pow
+from .lib.base import CustomException, EventLocation, GeneralSubparser, RPData, aux_sum_if_none, clean_filename, file_rename, find_nearest_smaller, parse_fraction, parse_pow
 
 
 # Constants
@@ -15,6 +16,7 @@ LABELS_SIZE = 15
 LABELS_DISTANCE = 1.025
 DOTS_SIZE = 15
 IMG_SIZE = list(map(lambda x: x*0.8, (8, 6)))
+INDEXOGRAM_SLOPE_LIMIT = Fraction(1, 4)
 
 
 class AbstractPlotter(object):
@@ -87,6 +89,8 @@ class AbstractTimePlotter(AbstractPlotter):
 
         self.x_values = list(map(float, self.global_offset))
         self.x_values.append(float(last_global_offset))
+
+        self.global_offset.append(last_global_offset)
 
         self.show_labels = show_labels
         self.labels_vertical_lines = []
@@ -197,6 +201,12 @@ class AbstractPartitiogramPlotter(AbstractPlotter):
         if self.with_labels:
             zipped = zip(self.partitions_labels, self.y_disp, self.x_aggl)
             for v, y, x in zipped:
+                if not x:
+                    x = 0
+                if not v:
+                    v = 0
+                if not y:
+                    y = 0
                 plt.text(x * LABELS_DISTANCE, y * LABELS_DISTANCE , v, fontsize=LABELS_SIZE)
 
 
@@ -212,15 +222,75 @@ class AbstractIndexogramPlotter(AbstractTimePlotter):
         self.inverted_agglomeration = [v * -1 for v in self.rpdata.data['Agglomeration']]
 
         self.index = self.rpdata.data['Index']
-        self.agglomeration = [v * -1 for v in self.rpdata.data['Agglomeration']]
+        self.agglomeration = self.rpdata.data['Agglomeration']
         self.dispersion = self.rpdata.data['Dispersion']
 
-        self.y_aggl = self.agglomeration
+        self.y_aggl = self.inverted_agglomeration
         self.y_aggl.append(self.y_aggl[-1])
 
         self.y_disp = self.dispersion
         self.y_disp.append(self.y_disp[-1])
 
+    def _auxiliary_slope_add(self) -> tuple:
+        '''Return new X- and Y-axis values lists with added intermediary points between adjacent ones to create small slopes at the end of each line.
+
+        The aim is to keep visual identification of partitioning operations.
+        See Sampaio and Gentil-Nunes (2022) for further information.'''
+
+        # Adapt values to add intermediary points between adjacent ones to
+        # create a small slope at the end of each "line".
+        size = len(self.x_values)
+        intermediary_points = {}
+        for i in range(size - 1):
+            yd = self.y_disp[i]
+            ya = self.y_aggl[i]
+            x = self.x_values[i]
+            go = self.global_offset[i]
+
+            nxt_x = self.x_values[i + 1]
+            x_diff = nxt_x - x
+
+            # conditions to add intermediary points:
+            # aggl/disp real values and enought space between adjacent x points.
+            c1 = x_diff > INDEXOGRAM_SLOPE_LIMIT
+            c2 = not numpy.isnan(yd)
+            c3 = not numpy.isnan(ya)
+
+            if all([c1, c2, c3]):
+                intermediary_points.update({
+                    i + 1: (
+                    nxt_x - INDEXOGRAM_SLOPE_LIMIT,
+                        go - INDEXOGRAM_SLOPE_LIMIT,
+                        yd,
+                        ya
+                    )
+                })
+
+        x_values = []
+        y_disp = []
+        y_aggl = []
+        global_offsets = []
+
+        for i in range(size):
+            yd = self.y_disp[i]
+            ya = self.y_aggl[i]
+            x = self.x_values[i]
+            go = self.global_offset[i]
+
+            # Add intermediary points for the slope creation
+            if i in intermediary_points.keys():
+                _x, _go, _yd, _ya = intermediary_points[i]
+                x_values.append(_x)
+                y_disp.append(_yd)
+                y_aggl.append(_ya)
+                global_offsets.append(_go)
+
+            x_values.append(x)
+            y_disp.append(yd)
+            y_aggl.append(ya)
+            global_offsets.append(go)
+
+        return x_values, global_offsets, y_disp, y_aggl
 
 class SimplePartitiogramPlotter(AbstractPartitiogramPlotter):
     def __init__(self, rpdata: RPData, image_format='svg', with_labels=True) -> None:
@@ -322,6 +392,10 @@ class ComparativePartitiogramPlotter(AbstractPartitiogramPlotter):
 
         if len(partitions_set) < MAXIMUM_POINTS_TO_LABEL:
             for p, (_a, _d) in partitions_map.items():
+                if not _a:
+                    _a = 0
+                if not _d:
+                    _d = 0
                 plt.text(_a * LABELS_DISTANCE, _d *LABELS_DISTANCE, p, fontsize=LABELS_SIZE)
 
         plt.legend(title='Label')
@@ -334,16 +408,18 @@ class SimpleIndexogramPlotter(AbstractIndexogramPlotter):
         self.name = 'simple-indexogram'
         super().__init__(rpdata, image_format, close_bubbles, show_labels)
 
-
     def plot(self):
         def draw_vertical_line(pair, x):
             aggl, disp = pair
             plt.vlines(x=x, ymin=aggl, ymax=disp, linestyles='dotted', colors='C3')
 
+        # Get new values with slopes
+        x_values, global_offsets, y_disp, y_aggl = self._auxiliary_slope_add()
+
         # The simple plot
         plt.clf()
-        plt.plot(self.x_values, self.y_aggl)
-        plt.plot(self.x_values, self.y_disp)
+        plt.plot(x_values, y_aggl)
+        plt.plot(x_values, y_disp)
 
         self.make_xticks()
 
@@ -355,18 +431,18 @@ class SimpleIndexogramPlotter(AbstractIndexogramPlotter):
             rest_segment = False
             last_pair = None
             i = 0
-            for i in range(len(self.agglomeration)):
-                pair = (self.agglomeration[i], self.dispersion[i])
-                _agg = self.agglomeration[i]
-                if not _agg:
+            for i in range(len(y_aggl)):
+                pair = (y_aggl[i], y_disp[i])
+                _agg = y_aggl[i]
+                if numpy.isnan(_agg):
                     if not rest_segment:
                         if last_pair:
-                            x = self.global_offset[i - 1]
+                            x = global_offsets[i]
                             draw_vertical_line(last_pair, x)
                         rest_segment = True
                 else:
                     if rest_segment:
-                        x = self.global_offset[i]
+                        x = global_offsets[i]
                         draw_vertical_line(pair, x)
                         rest_segment = False
                 last_pair = pair
@@ -440,10 +516,13 @@ class CombinedIndexogramPlotter(AbstractIndexogramPlotter):
         super().__init__(rpdata, image_format, close_bubbles, show_labels)
 
     def plot(self):
-        y_values = [d + a for d, a in zip(self.y_disp, self.y_aggl)]
+        # Get new values with slopes
+        x_values, _, y_disp, y_aggl = self._auxiliary_slope_add()
+
+        y_values = [aux_sum_if_none(d, a) for d, a in zip(y_disp, y_aggl)]
 
         plt.clf()
-        plt.plot(self.x_values, y_values)
+        plt.plot(x_values, y_values)
 
         self.make_xticks()
 
@@ -504,6 +583,7 @@ class Subparser(GeneralSubparser):
         self.parser.add_argument("--dots_size", help = "Dots size in simple partitiogram chart. Default=15", default=15, type=float)
         self.parser.add_argument("--labels_size", help = "Labels size in partitiogram chart. Default=15", default=15, type=float)
         self.parser.add_argument("--labels_distance", help = "Distance between points and labels in partitiogram chart. Default=1.025", default=1.025, type=float)
+        self.parser.add_argument("--indexogram_slope", help = "Slope's X-distance. Default=1/4 (use always rational numbers)", default='1/4', type=str)
 
     def handle(self, args):
         if args.resolution < 0 or args.resolution > 1200:
@@ -514,12 +594,14 @@ class Subparser(GeneralSubparser):
         global LABELS_SIZE
         global LABELS_DISTANCE
         global IMG_SIZE
+        global INDEXOGRAM_SLOPE_LIMIT
 
         MAXIMUM_POINTS_TO_LABEL = args.maximum_points_to_label
         DOTS_SIZE = args.dots_size
         LABELS_SIZE = args.labels_size
         LABELS_DISTANCE = args.labels_distance
         IMG_SIZE = list(map(lambda x: x*0.8, (8, 6)))
+        INDEXOGRAM_SLOPE_LIMIT = parse_fraction(args.indexogram_slope)
 
         close_bubbles = args.close_bubbles
         if close_bubbles:

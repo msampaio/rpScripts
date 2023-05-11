@@ -314,7 +314,7 @@ class SingleEvent(object):
     def __repr__(self) -> str:
         event_location = EventLocation(measure_number=self.measure_number, offset=self.offset)
         ind = event_location.str_index
-        return '<SE () num={} dur={} snd={}>'.format(ind, self.number_of_pitches, self.duration, self.sounding)
+        return '<SE ({}) num={} dur={} snd={}>'.format(ind, self.number_of_pitches, self.duration, self.sounding)
 
 
 class Parsema(object):
@@ -362,7 +362,7 @@ class Parsema(object):
             for s_event in self.single_events
         ])
         if list(number_of_pitches_set) == [0]:
-            self.partition = Partition([0])
+            self.partition = Partition([])
             return
         for s_event in self.single_events:
             key = (s_event.sounding, s_event.duration)

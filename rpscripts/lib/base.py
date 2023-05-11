@@ -244,6 +244,17 @@ def get_diff_lcm(seq: list) -> Fraction:
     values = map(make_fraction, sorted(list(set(diffs))))
     return Fraction(1, get_fractions_denominator_lcm(values))
 
+def aux_sum_if_none(a, b):
+    '''Return the sum if one or two given values is `None`.'''
+
+    if a and b:
+        return a + b
+    elif a:
+        return a
+    elif b:
+        return b
+    return
+
 
 ## Graph functions
 
@@ -323,6 +334,10 @@ def convert_texture_data_from_json(data: dict) -> dict:
         'Global offset',
         'Duration',
     ]
+
+    for k in ['Agglomeration', 'Dispersion']:
+        data[k] = [v if v != None else numpy.nan for v in data[k]]
+
     for k in fraction_keys:
         data[k] = list(map(parse_fraction, data[k]))
     return data
@@ -340,6 +355,12 @@ def convert_texture_data_to_json(data: dict) -> dict:
         'Global offset',
         'Duration',
     ]
+
+    for k in ['Agglomeration', 'Dispersion']:
+        if numpy.nan in new_data[k]:
+            new_data[k] = [v if not numpy.isnan(v) else None for v in new_data[k]]
+        new_data[k] = [v if v != None else None for v in new_data[k]]
+
     for k in fraction_keys:
         new_data[k] = list(map(fraction_to_string, new_data[k]))
     return new_data

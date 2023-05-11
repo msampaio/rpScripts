@@ -1,4 +1,4 @@
-'''This module provides a few statistical data about the filename.'''
+'''This module provides a few statistical data about the given filename.'''
 
 from matplotlib import pyplot as plt
 import pandas
