@@ -19,4 +19,4 @@ lattice_map_filename = 'lattice_map.json'
 LATTICE_MAP_PATH = os.path.join(AUX_DIR, lattice_map_filename)
 
 # FIXME: remove date and time
-VERSION = '2.0-dev' + ' (10/05/23-10:51)'
+VERSION = '2.0-dev' + ' (11/05/23-20:32)'
