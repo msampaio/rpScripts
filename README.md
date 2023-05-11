@@ -2,7 +2,9 @@
 
 RP Scripts is a command-line program designed to extract rhythmic partitioning information from given digital music scores files, plot partitiogram and indexogram, and to create annotated digital music scores files.
 
-This program has been developed by [Marcos Sampaio](https://marcos.sampaio.me) with the assistance of [Pauxy Gentil-Nunes](https://pauxy.net). RP Scripts' features are described in some published papers (See Section [Bibliography](#bibliography))
+This program has been developed by [Marcos Sampaio](https://marcos.sampaio.me) with the assistance of [Pauxy Gentil-Nunes](https://pauxy.net). RP Scripts' features are described in some published papers (See Section [Bibliography](#bibliography)).
+
+See the program documentation at [https://rpscripts.readthedocs.io/](https://rpscripts.readthedocs.io/).
 
 ## Bibliography
 
