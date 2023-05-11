@@ -7,4 +7,3 @@ graphviz
 networkx
 tdqm
 pyinstaller
-sphinx

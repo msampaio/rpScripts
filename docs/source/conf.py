@@ -7,7 +7,6 @@ import os
 import sys
 path = os.path.dirname(os.path.dirname(os.getcwd()))
 sys.path.insert(0, path)
-print(path)
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information

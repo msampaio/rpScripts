@@ -3,6 +3,7 @@ build: dependencies
 
 dependencies:
 	pip install -U -r requirements.txt
+	pip install -U -r docs/requirements.txt
 
 clean:
 	rm -rf build && \
