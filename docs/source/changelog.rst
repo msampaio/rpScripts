@@ -20,7 +20,7 @@ Features added
 - Trimmer
 - Converter (to ``CSV`` format)
 - Statistical data printer
-- Lattice map generator (?)
+- Lattice map generator
 - Sphinx documentation
 - PIP package generator
 - Binary generator
@@ -30,6 +30,7 @@ Features added
 - Frequency analysis calculator
 - Probability calculator
 - Docstrings
+- New chart settings options
 
 Release 1.1 (released Mar 1, 2023)
 ----------------------------------
