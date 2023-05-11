@@ -1,4 +1,5 @@
 sphinx
 sphinx-autodoc2
+graphviz
 music21
 tqdm
