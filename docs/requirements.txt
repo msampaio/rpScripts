@@ -1,2 +1,3 @@
 sphinx
 sphinx-autodoc2
+music21
