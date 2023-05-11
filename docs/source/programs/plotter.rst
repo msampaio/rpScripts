@@ -7,14 +7,14 @@ Plotter returns partitiogram and indexogram charts from a given JSON file genera
 
     rpscripts plot score.json
 
-Obs: All the examples below are related to Robert Schumann's op. 48, n. 2.
+**Note**: All the examples below are from Robert Schumann's op. 48, n. 2 (See the `examples <https://github.com/msampaio/rpScripts/tree/main/examples>`_ folder).
 
-.. figure:: ../../../examples/schumann-opus48no2-partitiogram.svg
+.. figure:: ../../../examples/schumann-opus48no2-simple-partitiogram.svg
     :alt: partitiogram
 
     Partitiogram
 
-.. figure:: ../../../examples/schumann-opus48no2-indexogram.svg
+.. figure:: ../../../examples/schumann-opus48no2-simple-indexogram.svg
     :alt: indexogram
 
     Indexogram
@@ -30,6 +30,7 @@ The option ``-h`` prints the command help:
                         [--maximum_points_to_label MAXIMUM_POINTS_TO_LABEL]
                         [--dots_size DOTS_SIZE] [--labels_size LABELS_SIZE]
                         [--labels_distance LABELS_DISTANCE]
+                        [--indexogram_slope INDEXOGRAM_SLOPE]
                         filename
 
     positional arguments:
@@ -68,7 +69,9 @@ The option ``-h`` prints the command help:
     --labels_distance LABELS_DISTANCE
                             Distance between points and labels in partitiogram
                             chart. Default=1.025
-
+    --indexogram_slope INDEXOGRAM_SLOPE
+                            Slope's X-distance. Default=1/4 (use always rational
+                            numbers)
 
 Image format
 ------------
@@ -143,27 +146,13 @@ Plotter generates comparative partitiograms for the combination of pairs of all 
 
     rpscripts plot -m score.json
 
-.. figure:: ../../../examples/schumann-opus48no2-labeled-comparison-partitiogram-part-a-part-b.svg
+.. figure:: ../../../examples/schumann-opus48no2-comparison-partitiogram-part-a-part-b.svg
     :alt: comparative-partitiogram
 
     Comparative partitiogram: parts A and B
 
 Indexogram options
 ------------------
-
-Closing bubbles
-^^^^^^^^^^^^^^^
-
-Use the ``-c`` option to plot vertical lines closing indexogram bubbles:
-
-.. code-block:: console
-
-    rpscripts plot -c score.json
-
-.. figure:: ../../../examples/schumann-opus48no2-indexogram-closing.svg
-    :alt: closing-indexogram
-
-    Indexogram with closing lines
 
 Stem style
 ^^^^^^^^^^
@@ -174,26 +163,42 @@ Use the ``-e`` option to plot indexogram in stem style:
 
     rpscripts plot -e score.json
 
-.. figure:: ../../../examples/schumann-opus48no2-indexogram-stem.svg
+.. figure:: ../../../examples/schumann-opus48no2-stem-indexogram.svg
     :alt: stem-indexogram
 
     Indexogram as stem chart
 
+.. _step_style:
+
+Step style
+^^^^^^^^^^
+
+Use the ``-p`` option to plot indexogram in stem style:
+
+.. code-block:: console
+
+    rpscripts plot -e score.json
+
+.. figure:: ../../../examples/schumann-opus48no2-step-indexogram.svg
+    :alt: stem-indexogram
+
+    Indexogram as step chart
+
+.. _stairs_style:
 
 Stairs style
 ^^^^^^^^^^^^
+
 Use the ``-t`` option to plot indexogram in stairs style:
 
 .. code-block:: console
 
     rpscripts plot -t score.json
 
-.. figure:: ../../../examples/schumann-opus48no2-indexogram-stairs.svg
+.. figure:: ../../../examples/schumann-opus48no2-stairs-indexogram.svg
     :alt: stairs-indexogram
 
     Indexogram as stair chart
-
-![Indexogram as stair chart](examples/schumann-opus48no2-indexogram-stairs.svg)
 
 
 Combined style
@@ -205,10 +210,33 @@ Use the ``-b`` option to plot indexogram in combined style:
 
     rpscripts plot -b score.json
 
-.. figure:: ../../../examples/schumann-opus48no2-indexogram-combined.svg
+.. figure:: ../../../examples/schumann-opus48no2-combined-indexogram.svg
     :alt: combined-indexogram
 
     Indexogram as combined chart
+
+Closing bubbles
+^^^^^^^^^^^^^^^
+
+For the Simple indexogram, use the ``-c`` option to plot vertical lines closing indexogram bubbles:
+
+.. code-block:: console
+
+    rpscripts plot -c score.json
+
+.. figure:: ../../../examples/schumann-opus48no2-simple-indexogram-closing.svg
+    :alt: closing-indexogram
+
+    Indexogram with closing lines
+
+
+Sloping X-distance
+^^^^^^^^^^^^^^^^^^
+
+For the Simple and Combined indexograms, use ``--indexogram_slope`` option to set the slope's X-distance. The slopes between adjacent points is helpful in partitioning operations identification.
+
+A low value generates a chart similar to :ref:`stairs_style` and :ref:`step_style`.
+
 
 All charts
 ----------

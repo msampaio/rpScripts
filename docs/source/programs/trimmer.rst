@@ -22,4 +22,4 @@ Option ``-h`` prints program's help:
                             Start measure. Blank means "from the beginning"
     -e END, --end END     End measure. Blank means "to the end"
 
-Obs: Trimmed JSON data is not suitable for the :doc:`annotator` processing.
+**Note**: Trimmed JSON data is not suitable for the :doc:`annotator` processing.

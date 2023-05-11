@@ -15,9 +15,10 @@ Command's output:
 
 .. code-block:: console
 
+    This file contains labels data: True
     Number of events: 55
     Number of distinct partitions: 17
     Number of distinct density numbers: 6
     Ratio partitions/dn: 2.83
     Highest dispersion index: 13
-    Highest agglomeration index: 15.0
+    Highest agglomeration index: 15
