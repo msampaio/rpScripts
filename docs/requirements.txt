@@ -2,4 +2,8 @@ sphinx
 sphinx-autodoc2
 graphviz
 music21
+networkx
+numpy
+pandas
+statsmodels
 tqdm
