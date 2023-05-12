@@ -27,6 +27,10 @@ The option ``-h`` prints the command help:
 
     usage: rpscripts plot [-h] [-f IMG_FORMAT] [-r RESOLUTION] [-a] [-u] [-w] [-m]
                         [-fl] [-c] [-e] [-t] [-p] [-b]
+                        [--minimum_dispersion MINIMUM_DISPERSION]
+                        [--maximum_dispersion MAXIMUM_DISPERSION]
+                        [--minimum_agglomeration MINIMUM_AGGLOMERATION]
+                        [--maximum_agglomeration MAXIMUM_AGGLOMERATION]
                         [--maximum_points_to_label MAXIMUM_POINTS_TO_LABEL]
                         [--dots_size DOTS_SIZE] [--labels_size LABELS_SIZE]
                         [--labels_distance LABELS_DISTANCE]
@@ -60,6 +64,14 @@ The option ``-h`` prints the command help:
     -p, --step            Indexogram as a step chart
     -b, --combined        Indexogram as a combination of aglomeration and
                             dispersion
+    --minimum_dispersion MINIMUM_DISPERSION
+                            Partitiogram minimum dispersion value to render
+    --maximum_dispersion MAXIMUM_DISPERSION
+                            Partitiogram maximum dispersion value to render
+    --minimum_agglomeration MINIMUM_AGGLOMERATION
+                            Partitiogram minimum agglomeration value to render
+    --maximum_agglomeration MAXIMUM_AGGLOMERATION
+                            Partitiogram maximum agglomeration value to render
     --maximum_points_to_label MAXIMUM_POINTS_TO_LABEL
                             Maximum number of points to label in bubble
                             partitiogram chart. Default=50
@@ -165,6 +177,20 @@ Plotter generates comparative partitiograms for the combination of pairs of all 
     :alt: comparative-partitiogram
 
     Comparative partitiogram: parts A and B
+
+Filters
+^^^^^^^
+
+Use the ``--minimum_dispersion``, ``--maximum_dispersion``, ``--minimum_agglomeration``, and ``--maximum_agglomeration`` options to filter the plotted partitiogram data.
+
+.. code-block:: console
+
+    rpscripts plot --minimum_dispersion 6 --maximum_agglomeration 8 score.json
+
+.. figure:: ../../../examples/schumann-opus48no2-simple-partitiogram-filtered.svg
+    :alt: filtered-partitiogram
+
+    Filtered partitiogram
 
 Indexogram options
 ------------------
