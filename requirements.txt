@@ -1,10 +1,10 @@
 build
+graphviz
 matplotlib
 music21
+networkx
 numpy
 pandas
-statsmodels
-graphviz
-networkx
-tdqm
 pyinstaller
+statsmodels
+tqdm
