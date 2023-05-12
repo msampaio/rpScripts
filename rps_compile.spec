@@ -1,12 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-# Created with pyinstaller --onefile rpscripts.py
+# Created with pyinstaller --onefile rps_run.py
 
 block_cipher = None
 
 
 a = Analysis(
-    ['rpscripts.py'],
+    ['rps_run.py'],
     pathex=[],
     binaries=[],
     datas=[],

@@ -10,4 +10,4 @@ clean:
 	find . -type f -name '*.pyc' -exec rm {} \;
 
 compile: dependencies clean
-	pyinstaller rpscripts.spec
+	pyinstaller rps_compile.spec
