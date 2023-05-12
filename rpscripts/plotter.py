@@ -15,7 +15,7 @@ MAXIMUM_POINTS_TO_LABEL = 50
 LABELS_SIZE = 15
 LABELS_DISTANCE = 1.025
 DOTS_SIZE = 15
-IMG_SIZE = list(map(lambda x: x*0.8, (8, 6)))
+IMG_SIZE = [6.4, 4.8]
 INDEXOGRAM_SLOPE_LIMIT = Fraction(1, 4)
 
 
@@ -584,6 +584,7 @@ class Subparser(GeneralSubparser):
         self.parser.add_argument("--labels_size", help = "Labels size in partitiogram chart. Default=15", default=15, type=float)
         self.parser.add_argument("--labels_distance", help = "Distance between points and labels in partitiogram chart. Default=1.025", default=1.025, type=float)
         self.parser.add_argument("--indexogram_slope", help = "Slope's X-distance. Default=1/4 (use always rational numbers)", default='1/4', type=str)
+        self.parser.add_argument("--figure_dimensions", help = "Figure dimensions. Default=6.4,4.8 (comma separated values)", default='6.4,4.8', type=str)
 
     def handle(self, args):
         if args.resolution < 0 or args.resolution > 1200:
@@ -600,8 +601,10 @@ class Subparser(GeneralSubparser):
         DOTS_SIZE = args.dots_size
         LABELS_SIZE = args.labels_size
         LABELS_DISTANCE = args.labels_distance
-        IMG_SIZE = list(map(lambda x: x*0.8, (8, 6)))
+        IMG_SIZE = list(map(float, args.figure_dimensions.split(',')))
         INDEXOGRAM_SLOPE_LIMIT = parse_fraction(args.indexogram_slope)
+
+        plt.rcParams['figure.figsize'] = IMG_SIZE
 
         close_bubbles = args.close_bubbles
         if close_bubbles:
