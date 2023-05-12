@@ -157,7 +157,7 @@ class AbstractPartitiogramPlotter(AbstractPlotter):
 
     This class extends AbstractPlotter and has agglomeration, dispersion and quantity attributes to help Partitiogram scatter plotting.'''
 
-    def __init__(self, rpdata: RPData, image_format='svg', with_labels=True) -> None:
+    def __init__(self, rpdata: RPData, image_format='svg', with_labels=True, **kwargs) -> None:
         super().__init__(rpdata, image_format)
         self.with_labels = with_labels
         self.frequency_analysis = {}
@@ -166,6 +166,15 @@ class AbstractPartitiogramPlotter(AbstractPlotter):
         self.y_disp = []
         self.x_aggl = []
         self.quantity = []
+
+        # Filter values
+        self.min_dispersion = None
+        self.max_dispersion = None
+        self.min_agglomeration = None
+        self.max_agglomeration = None
+
+        if kwargs:
+            self.__dict__.update(kwargs)
 
         total = 0
         size = len(self.rpdata.partitions)
@@ -189,6 +198,9 @@ class AbstractPartitiogramPlotter(AbstractPlotter):
             self.y_disp.append(disp)
             self.quantity.append(dur / total)
 
+        if self.check_given_limits():
+            self.data_filter()
+
     def plot(self):
         '''Extend AbstractPlotter's method. Set X- and Y-axis labels.'''
 
@@ -208,6 +220,49 @@ class AbstractPartitiogramPlotter(AbstractPlotter):
                 if not y:
                     y = 0
                 plt.text(x * LABELS_DISTANCE, y * LABELS_DISTANCE , v, fontsize=LABELS_SIZE)
+
+    def check_given_limits(self) -> bool:
+        '''Return True if there are value filters defined.'''
+
+        a = self.min_dispersion == None
+        b = self.max_dispersion == None
+        c = self.min_agglomeration == None
+        d = self.max_agglomeration == None
+        return not all([a, b, c, d])
+
+    def data_filter(self) -> None:
+        '''Filter the dispersion and agglomeration indexes values for a narrowed plot.'''
+
+        values = [(d, a, q) for d, a, q in zip(self.y_disp, self.x_aggl, self.quantity)]
+
+        if self.min_dispersion != None:
+            if self.min_dispersion > numpy.nanmin(self.y_disp):
+                values = [(d, a, q) for d, a, q in values if d >= self.min_dispersion]
+
+        if self.max_dispersion != None:
+            if self.max_dispersion < numpy.nanmax(self.y_disp):
+                values = [(d, a, q) for d, a, q in values if d <= self.max_dispersion]
+
+        if self.min_agglomeration != None:
+            if self.min_agglomeration > numpy.nanmin(self.y_disp):
+                values = [(d, a, q) for d, a, q in values if a >= self.min_agglomeration]
+
+        if self.max_agglomeration != None:
+            if self.max_agglomeration < numpy.nanmax(self.y_disp):
+                values = [(d, a, q) for d, a, q in values if a <= self.max_agglomeration]
+
+        y_disp = []
+        x_aggl = []
+        quantity = []
+
+        for d, a, q in values:
+            y_disp.append(d)
+            x_aggl.append(a)
+            quantity.append(q)
+
+        self.y_disp = y_disp
+        self.x_aggl = x_aggl
+        self.quantity = quantity
 
 
 class AbstractIndexogramPlotter(AbstractTimePlotter):
@@ -293,9 +348,9 @@ class AbstractIndexogramPlotter(AbstractTimePlotter):
         return x_values, global_offsets, y_disp, y_aggl
 
 class SimplePartitiogramPlotter(AbstractPartitiogramPlotter):
-    def __init__(self, rpdata: RPData, image_format='svg', with_labels=True) -> None:
+    def __init__(self, rpdata: RPData, image_format='svg', with_labels=True,  **kwargs) -> None:
         self.name = 'simple-partitiogram'
-        super().__init__(rpdata, image_format, with_labels)
+        super().__init__(rpdata, image_format, with_labels, **kwargs)
 
     def plot(self):
         '''Extend AbstractPartitiogramPlotter's method. Create scatter plot.'''
@@ -311,9 +366,9 @@ class SimplePartitiogramPlotter(AbstractPartitiogramPlotter):
 
 
 class BubblePartitiogramPlotter(AbstractPartitiogramPlotter):
-    def __init__(self, rpdata: RPData, image_format='svg', with_labels=True, bubble_size=2000) -> None:
+    def __init__(self, rpdata: RPData, image_format='svg', with_labels=True, bubble_size=2000, **kwargs) -> None:
         self.name = 'bubble-partitiogram'
-        super().__init__(rpdata, image_format, with_labels)
+        super().__init__(rpdata, image_format, with_labels, **kwargs)
         self.bubble_size = bubble_size
 
     def plot(self):
@@ -331,12 +386,12 @@ class BubblePartitiogramPlotter(AbstractPartitiogramPlotter):
 
 
 class ComparativePartitiogramPlotter(AbstractPartitiogramPlotter):
-    def __init__(self, rpdata: RPData, column_1, column_2, image_format='svg', with_labels=True) -> None:
+    def __init__(self, rpdata: RPData, column_1, column_2, image_format='svg', with_labels=True, **kwargs) -> None:
         self.labels = rpdata.labels
         self.column_1 = column_1
         self.column_2 = column_2
         self.name = 'comparison-partitiogram-{}-{}'.format(clean_filename(self.column_1), clean_filename(self.column_2))
-        super().__init__(rpdata, image_format, with_labels)
+        super().__init__(rpdata, image_format, with_labels, **kwargs)
 
     def plot(self):
         '''Extend AbstractPartitiogramPlotter's method. Create multiple superimposed scatter plots.'''
@@ -579,6 +634,10 @@ class Subparser(GeneralSubparser):
         self.parser.add_argument("-t", "--stairs", help = "Indexogram as a stair chart", action='store_true')
         self.parser.add_argument("-p", "--step", help = "Indexogram as a step chart", action='store_true')
         self.parser.add_argument("-b", "--combined", help = "Indexogram as a combination of aglomeration and dispersion", action='store_true')
+        self.parser.add_argument("--minimum_dispersion", help = "Partitiogram minimum dispersion value to render", default=None, type=float)
+        self.parser.add_argument("--maximum_dispersion", help = "Partitiogram maximum dispersion value to render", default=None, type=float)
+        self.parser.add_argument("--minimum_agglomeration", help = "Partitiogram minimum agglomeration value to render", default=None, type=float)
+        self.parser.add_argument("--maximum_agglomeration", help = "Partitiogram maximum agglomeration value to render", default=None, type=float)
         self.parser.add_argument("--maximum_points_to_label", help = "Maximum number of points to label in bubble partitiogram chart. Default=50", default=50, type=int)
         self.parser.add_argument("--dots_size", help = "Dots size in simple partitiogram chart. Default=15", default=15, type=float)
         self.parser.add_argument("--labels_size", help = "Labels size in partitiogram chart. Default=15", default=15, type=float)
@@ -618,6 +677,13 @@ class Subparser(GeneralSubparser):
         if show_form_labels:
             show_form_labels = True
 
+        partitiogram_filters = {
+            'min_dispersion': args.minimum_dispersion,
+            'max_dispersion': args.maximum_dispersion,
+            'min_agglomeration': args.minimum_agglomeration,
+            'max_agglomeration': args.maximum_agglomeration,
+        }
+
         image_format = args.img_format.lower()
         if image_format not in ['svg', 'jpg', 'png']:
             raise CustomException('Image format must be svg, jpg or png.')
@@ -635,11 +701,11 @@ class Subparser(GeneralSubparser):
 
             ## Partitiograms
             if args.comparative_partitiogram:
-                part_obj = ComparativePartitiogramMaker(rp_data, image_format, with_labels)
+                part_obj = ComparativePartitiogramMaker(rp_data, image_format, with_labels, **partitiogram_filters)
             elif args.bubble_partitiogram:
-                part_obj = BubblePartitiogramPlotter(rp_data, image_format, with_labels)
+                part_obj = BubblePartitiogramPlotter(rp_data, image_format, with_labels, **partitiogram_filters)
             else:
-                part_obj = SimplePartitiogramPlotter(rp_data, image_format, with_labels)
+                part_obj = SimplePartitiogramPlotter(rp_data, image_format, with_labels, **partitiogram_filters)
 
             part_obj.plot()
             part_obj.save()
