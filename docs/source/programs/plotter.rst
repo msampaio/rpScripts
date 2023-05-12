@@ -31,6 +31,7 @@ The option ``-h`` prints the command help:
                         [--dots_size DOTS_SIZE] [--labels_size LABELS_SIZE]
                         [--labels_distance LABELS_DISTANCE]
                         [--indexogram_slope INDEXOGRAM_SLOPE]
+                        [--figure_dimensions FIGURE_DIMENSIONS]
                         filename
 
     positional arguments:
@@ -72,6 +73,9 @@ The option ``-h`` prints the command help:
     --indexogram_slope INDEXOGRAM_SLOPE
                             Slope's X-distance. Default=1/4 (use always rational
                             numbers)
+    --figure_dimensions FIGURE_DIMENSIONS
+                            Figure dimensions. Default=6.4,4.8 (comma separated
+                            values)
 
 Image format
 ------------
@@ -92,6 +96,15 @@ Use the ``-r`` option to set JPG or PNG image resolution.
 .. code-block:: console
 
     rpscripts plot -f png -r 300 score.json
+
+Image dimensions
+----------------
+
+The ``--figure_dimensions`` set the image dimensions:
+
+.. code-block:: console
+
+    rpscripts plot --figure_dimensions 16.0,4.8 score.json
 
 Partitiogram options
 ---------------------
