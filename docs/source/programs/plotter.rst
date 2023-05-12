@@ -148,10 +148,12 @@ Use the ``-u`` option to plot bubble partitiograms:
     Bubble partitiogram
 
 
+.. _comparative_partitiograms:
+
 Comparative partitiograms
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Use the ``-m`` option to plot comparative partitiograms. It demands an annotated CSV file with labels for each row. The :doc:`labeler` program generates the annotated file.
+Use the ``-m`` option to plot comparative partitiograms. It demands a labeled ``JSON`` file. The :doc:`labeler` program generates the labeled file.
 
 Plotter generates comparative partitiograms for the combination of pairs of all available labels.
 
@@ -241,6 +243,23 @@ For the Simple indexogram, use the ``-c`` option to plot vertical lines closing 
     :alt: closing-indexogram
 
     Indexogram with closing lines
+
+
+.. _form_displaying:
+
+Form labels displaying
+^^^^^^^^^^^^^^^^^^^^^^
+
+For the labels displaying, use the ``-fl`` option. It adds vertical lines in the indexogram. It demands a labeled ``JSON`` file. The :doc:`labeler` program generates the labeled file.
+
+.. code-block:: console
+
+    rpscripts plot -fl score.json
+
+.. figure:: ../../../examples/schumann-opus48no2-simple-indexogram-labeled.svg
+    :alt: labeled-indexogram
+
+    Indexogram with form labels indications
 
 
 Sloping X-distance

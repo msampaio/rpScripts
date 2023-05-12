@@ -30,3 +30,5 @@ Option ``-h`` returns the program's help:
     -h, --help            show this help message and exit
     -t TXT_FILENAME, --txt_filename TXT_FILENAME
                             TXT filename (labels map)
+
+See :ref:`comparative_partitiograms` and :ref:`form_displaying` for some labels applications.
