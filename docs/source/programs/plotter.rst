@@ -100,7 +100,7 @@ Use the ``-r`` option to set JPG or PNG image resolution.
 Image dimensions
 ----------------
 
-The ``--figure_dimensions`` set the image dimensions:
+Use the ``--figure_dimensions`` option to set the image dimensions:
 
 .. code-block:: console
 
