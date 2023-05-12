@@ -18,13 +18,13 @@ The easiest way to use it is by creating a binary file (for instance, a ``.exe``
 
 .. code-block:: console
 
-   pyinstaller rpscripts.spec
+   pyinstaller rps_compile.spec
 
 This command generates ``build`` and ``dist`` folders and saves the binary file into the ``dist`` folder.
 
 2. Move the binary file to a folder in the user system's ``PATH``.
 
-3. We encourage the user to create a personal scripts folder and put it in the system's ``PATH``.
+3. We encourage the user to create a personal scripts folder and put it in the system's ``PATH`` environment variable.
 
 4. Jump to :ref:`finishing_installation` instructions.
 
@@ -43,7 +43,7 @@ Then, locate the ``.whl`` file inside the ``dist`` folder and run:
 
    pip install -U dist/rpscripts-[version]-py3-none-any.whl
 
-Linux and Mac users must rename the ``rps_run.py`` file to ``rpscripts`` and move it to a binary folder listed at ``PATH``, such as ``~/.local/bin`` (Linux) or ``/usr/local/bin`` (Mac).
+Linux and Mac users must rename the ``rps_bin.py`` file to ``rpscripts`` and move it to a binary folder listed at ``PATH``, such as ``~/.local/bin`` (Linux) or ``/usr/local/bin`` (Mac).
 
 .. _finishing_installation:
 
