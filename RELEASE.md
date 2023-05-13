@@ -2,7 +2,7 @@
 
 ## 1.1
 
-This release contains
+### Features added
 
 - Rhythmic Partitioning Labeler script
 - RPP refactoring (class based)
@@ -14,16 +14,18 @@ This release contains
 - Optional CSV rendering without equal durations
 - Functional tests (RPC)
 - Annotation from MIDI files.
-- Bug fixes
-  - Parsing of chords with notes with distinct tie values
-  - Kern parsing
-  - Events' duration calculating
-  - CSV format reading
-  - Example image's legends
+
+### Bug fixes
+
+- Parsing of chords with notes with distinct tie values
+- Kern parsing
+- Events' duration calculating
+- CSV format reading
+- Example image's legends
 
 ## 1.0
 
-This release contains:
+### Features added
 
 - RP Scripts documentation
 - Standalone RPC Script
