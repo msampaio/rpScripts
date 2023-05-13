@@ -1,5 +1,33 @@
 # Releases
 
+## 2.0
+
+### Deprecated
+
+- Moved ``RPC`` to ``calculator``
+- Moved ``RPP`` to ``plotter``
+- Moved ``RPA`` to ``annotator``
+- Moved ``RPL`` to ``labeler``
+- Moved multi-``CSV``-based to ``JSON``-based
+
+### Features added
+
+- New Command line interface
+- Trimmer
+- Converter (to ``CSV`` format)
+- Statistical data printer
+- Lattice map generator
+- Sphinx documentation
+- PIP package generator
+- Binary generator
+- `partition` module
+- New modules with hacking-easy classes
+- Memory optimization: position and duration events replace equally-size based events
+- Frequency analysis calculator
+- Probability calculator
+- Docstrings
+- New chart settings options
+
 ## 1.1
 
 ### Features added

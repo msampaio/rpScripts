@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Release 2.0 (in development)
-----------------------------
+Release 2.0 (released May 13, 2023)
+-----------------------------------
 
 Deprecated
 ~~~~~~~~~~
