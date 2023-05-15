@@ -10,7 +10,7 @@ Bibliography
 How to cite
 -----------
 
-Sampaio, Marcos da Silva and Pauxy Gentil-Nunes. RP Scripts: Rhythmic Partitioning Scripts, release 2.0. Available at https://github.com/msampaio/rpScripts. Accessed on May 10, 2023, 2023.
+Sampaio, Marcos da Silva and Pauxy Gentil-Nunes. RP Scripts: Rhythmic Partitioning Scripts, release 2.0. Available at https://github.com/msampaio/rpScripts. Accessed on May 13, 2023, 2023.
 
 .. include:: ../../bibtex.bib
     :literal:
