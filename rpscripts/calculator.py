@@ -229,14 +229,16 @@ def make_offset_map(m21part: music21.stream.Part) -> dict:
         if measure_offset not in aux_offset_map.keys():
             aux_offset_map.update({measure_offset: number})
 
-    # Recalculate measure numbers for score fixing.
-    i = 0
+    # Recalculate measure numbers for score fixing in ritornello cases
     new_offset_map = {}
-    for k, v in aux_offset_map.items():
-        if v == 1:
-            i += 1
-        new_offset_map[i] = k
-        i += 1
+    if 0 in aux_offset_map.values():
+        measure_number = 0
+    else:
+        measure_number = 1
+
+    for global_offset in aux_offset_map.keys():
+        new_offset_map[measure_number] = global_offset
+        measure_number += 1
     return new_offset_map
 
 
