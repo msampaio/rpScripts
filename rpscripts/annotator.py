@@ -27,10 +27,10 @@ def main(m21_score: music21.stream.Score, rpdata: RPData, outfilename: str, labe
     for m in p0.getElementsByClass(music21.stream.Measure):
         new_measure = deepcopy(m)
         new_measure.elements = ()
+        for el in m:
+            if isinstance(el, music21.meter.TimeSignature):
+                new_measure.insert(el.offset, el)
         if m.number in events_location.keys():
-            for el in m:
-                if isinstance(el, music21.meter.TimeSignature):
-                    new_measure.insert(el.offset, el)
             for _offset, partition in events_location[m.number]:
                 rest = music21.note.Rest(quarterLength=1/256)
                 rest.offset = _offset
@@ -44,8 +44,6 @@ def main(m21_score: music21.stream.Score, rpdata: RPData, outfilename: str, labe
 
     for m in measures.values():
         new_part.append(m)
-
-    new_part = new_part.makeRests(fillGaps=True)
 
     new_score.insert(0, new_part)
     new_score.write(fmt='mxl', fp=outfilename)
