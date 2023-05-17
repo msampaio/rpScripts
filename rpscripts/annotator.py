@@ -28,12 +28,15 @@ def main(m21_score: music21.stream.Score, rpdata: RPData, outfilename: str, labe
         new_measure = deepcopy(m)
         new_measure.elements = ()
         if m.number in events_location.keys():
+            for el in m:
+                if isinstance(el, music21.meter.TimeSignature):
+                    new_measure.insert(el.offset, el)
             for _offset, partition in events_location[m.number]:
                 rest = music21.note.Rest(quarterLength=1/256)
                 rest.offset = _offset
                 rest.addLyric(partition)
                 new_measure.insert(_offset, rest)
-            new_measure = new_measure.makeRests(fillGaps=True)
+            new_measure = new_measure.makeRests(fillGaps=True, timeRangeFromBarDuration=True)
             for el in new_measure:
                 el.style.color = 'white'
                 el.style.hideObjectOnPrint = True
