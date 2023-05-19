@@ -19,4 +19,4 @@ lattice_map_filename = 'lattice_map.json'
 LATTICE_MAP_PATH = os.path.join(AUX_DIR, lattice_map_filename)
 
 # Remove date and time for stable versions
-VERSION = '2.0'
+VERSION = '2.0.1'

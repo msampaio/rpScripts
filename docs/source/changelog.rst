@@ -1,6 +1,18 @@
 Changelog
 =========
 
+Release 2.0.1 (released May 19, 2023)
+-------------------------------------
+
+Bugs fixed
+~~~~~~~~~~
+
+- `#2 <https://github.com/msampaio/rpScripts/issues/2>`_: Offset map creation
+- `#1 <https://github.com/msampaio/rpScripts/issues/1>`_: Annotation file creation
+- Minor writing fix
+- Large offset fractions approximation
+- Missing methods documentation addition
+
 Release 2.0 (released May 13, 2023)
 -----------------------------------
 

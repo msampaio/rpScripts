@@ -16,8 +16,16 @@ These following commands...
 ![](examples/schumann-opus48no2-simple-partitiogram.svg)
 ![](examples/schumann-opus48no2-simple-indexogram.svg)
 
+... and the additional command...
+
+    rpscripts annotate -s score.mxl score.json
+
+... generates an annotated file score such as:
+
+![](examples/schumann-opus48no2-annotated.svg)
+
 ## How to cite
 
-Sampaio, Marcos da Silva and Pauxy Gentil-Nunes. RP Scripts: Rhythmic Partitioning Scripts, release 2.0. Available at https://github.com/msampaio/rpScripts. Accessed on May 11, 2023, 2023.
+Sampaio, Marcos da Silva and Pauxy Gentil-Nunes. RP Scripts: Rhythmic Partitioning Scripts, release 2.0.1. Available at https://github.com/msampaio/rpScripts. Accessed on May 19, 2023, 2023.
 
 [Bibtex](bibtex.bib)
