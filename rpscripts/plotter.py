@@ -133,7 +133,7 @@ class AbstractTimePlotter(AbstractPlotter):
             local_offset = Fraction(value - go)
 
             event_location = EventLocation(measure_number=measure_number, offset=local_offset)
-            new_labels.append(event_location.str_index)
+            new_labels.append(event_location.get_str_index())
 
         plt.xticks(ticks=new_ticks, labels=new_labels)
 

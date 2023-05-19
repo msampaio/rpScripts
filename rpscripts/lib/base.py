@@ -393,17 +393,29 @@ class EventLocation(object):
     def __repr__(self) -> str:
         return '<EL {}>'.format(self.str_index)
 
-    def make_str_index(self):
-        '''Return string index (measure number + offset).'''
+    def make_str_index(self) -> None:
+        '''Set the string index (measure number + offset).'''
 
         self.str_index = '{}+{}'.format(self.measure_number, self.offset)
 
-    def parse_str_index(self):
+    def parse_str_index(self) -> None:
         '''Parse string index and store in the class attributes.'''
 
         self.measure_number, self.offset = self.str_index.split('+')
         self.offset = parse_fraction(self.offset)
 
+    def get_str_index(self, pretty=True) -> str:
+        '''Return the string index (measure + offset). If pretty and huge fraction (ex: xxxxx/yyyyy), return an approximate float value.'''
+
+        if self.str_index == None:
+            self.make_str_index()
+        if pretty:
+            numerator = self.offset.numerator
+            denominator = self.offset.denominator
+            if numerator > 10**4 or denominator > 10**4:
+                _offset = round(float(self.offset), 2)
+                return '{}+~{}'.format(self.measure_number, _offset)
+        return self.str_index
 
 class RPData(object):
     '''Main Rhythmic Partitioning Data class.'''
