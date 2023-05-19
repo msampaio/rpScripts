@@ -291,9 +291,13 @@ For the labels displaying, use the ``-fl`` option. It adds vertical lines in the
 Sloping X-distance
 ^^^^^^^^^^^^^^^^^^
 
-For the Simple and Combined indexograms, use ``--indexogram_slope`` option to set the slope's X-distance. The slopes between adjacent points is helpful in partitioning operations identification.
+For the Simple and Combined indexograms, use ``--indexogram_slope`` option to set the slope's X-distance. The slopes between adjacent points is helpful in partitioning operations identification. The option accepts only rational numbers (e.g. 1/8).
 
 A low value generates a chart similar to :ref:`stairs_style` and :ref:`step_style`.
+
+.. code-block:: console
+
+    rpscripts plot --indexogram_slope 1/2 score.json
 
 
 All charts
