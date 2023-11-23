@@ -7,9 +7,11 @@ from .calculator import ParsemaeSegment
 from .lib.partition import Partition
 from .lib.base import RPData
 
-from . import calculator
-from . import plotter
 from . import annotator
-from . import labeler
+from . import calculator
 from . import converter
+from . import info
+from . import labeler
+from . import plotter
+from . import stats
 from . import trimmer
