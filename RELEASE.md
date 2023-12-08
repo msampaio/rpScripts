@@ -1,5 +1,29 @@
 # Releases
 
+## 2.1
+
+### Features added
+
+- New texture class calculator and plotter
+
+### Improvements
+
+- New Statistics auxiliary class
+
+## 2.0.1
+
+### Improvements
+
+- Sloping-x option documentation
+
+### Bug fixes
+
+- Offset map creation
+- Annotation file creation
+- Minor writing fix
+- Large offset fractions approximation
+- Missing methods documentation addition
+
 ## 2.0
 
 ### Deprecated

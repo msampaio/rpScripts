@@ -1,6 +1,19 @@
 Changelog
 =========
 
+Release 2.1 (released Dec 8, 2023)
+-------------------------------------
+
+Features added
+~~~~~~~~~~~~~~
+
+- New texture class calculator and plotter
+
+Improvements
+~~~~~~~~~~~~
+
+- New `Statistics` auxiliary class
+
 Release 2.0.1 (released May 19, 2023)
 -------------------------------------
 
