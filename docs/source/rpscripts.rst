@@ -84,6 +84,14 @@ rpscripts.stats module
    :undoc-members:
    :show-inheritance:
 
+rpscripts.tclass module
+-----------------------
+
+.. automodule:: rpscripts.tclass
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 rpscripts.trimmer module
 ------------------------
 

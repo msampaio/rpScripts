@@ -15,4 +15,5 @@ RP Scripts comprises several programs to calculate, plot, annotate, label, and t
    stats
    utils
    converter
+   tclass
    trimmer

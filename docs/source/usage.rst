@@ -17,6 +17,7 @@ RP Scripts comprises the following programs:
 - Stats
 - Converter
 - Trimmer
+- TClass
 
 .. _cli:
 
@@ -36,7 +37,7 @@ This command outputs:
 .. code-block:: console
 
   usage: rpscripts [-h] [-v]
-                  {calc,plot,annotate,label,info,utils,stats,convert,trim}
+                  {calc,plot,annotate,label,info,utils,stats,convert,trim,tclass}
                   ...
 
   Rhythmic Partitioning Scripts.
@@ -48,7 +49,7 @@ This command outputs:
   Subcommands:
     Available subcommands
 
-    {calc,plot,annotate,label,info,utils,stats,convert,trim}
+    {calc,plot,annotate,label,info,utils,stats,convert,trim,tclass}
       calc                Calculator
       plot                Charts plotter
       annotate            Digital score annotator
@@ -59,6 +60,7 @@ This command outputs:
       stats               Statistical tools
       convert             JSON file converter. Convert JSON to CSV file
       trim                JSON file trimmer. Trim given measures
+      tclass              Textural class calculator and plotter
 
   Further information available at https://github.com/msampaio/rpScripts
 
