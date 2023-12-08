@@ -19,6 +19,7 @@ from ..config import ENCODING
 ## Add new RP Data attributes here
 RPDATA_ATTRIBUTES = [
     'partitions',
+    'tclass',
 ]
 
 ## Pow conversion functions
@@ -268,7 +269,7 @@ def make_general_graph(labels: list, name: str) -> graphviz.Digraph:
         if previous_label and next_label and previous_label != next_label:
             labels_pairs.add((previous_label, next_label))
     dot = graphviz.Digraph(comment=name)
-    for prev, nxt in labels_pairs:
+    for prev, nxt in sorted(labels_pairs):
         dot.edge(prev, nxt)
 
     return dot

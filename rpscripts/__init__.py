@@ -15,3 +15,5 @@ from . import labeler
 from . import plotter
 from . import stats
 from . import trimmer
+
+from . import tclass

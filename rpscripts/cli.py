@@ -14,6 +14,7 @@ from . import stats
 from . import trimmer
 from . import utils
 
+from . import tclass
 
 def main() -> None:
     '''Parse the given command line arguments.'''
@@ -33,6 +34,7 @@ def main() -> None:
 
     # Add new custom arg parsers here
     parsers.extend([
+        tclass.Subparser,
     ])
 
     main_parser = argparse.ArgumentParser(
