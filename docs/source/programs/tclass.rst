@@ -7,6 +7,8 @@ TClass calculates the textural classes and returns two charts: textural classes 
 
     rpscripts tclass score.json
 
+**Note**: See `Moreira, 2019` at :doc:`../bibliography` for further information about textural classes.
+
 **Note**: All the examples below are from Robert Schumann's op. 48, n. 2 (See the `examples <https://github.com/msampaio/rpScripts/tree/main/examples>`_ folder).
 
 .. figure:: ../../../examples/schumann-opus48no2-classes.svg
