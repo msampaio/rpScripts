@@ -1,5 +1,11 @@
 # Releases
 
+## Next release
+
+### Improvements
+
+- Add missing information in the documentation.
+
 ## 2.1
 
 ### Features added

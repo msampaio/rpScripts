@@ -1,8 +1,16 @@
 Changelog
 =========
 
+Next Release
+------------
+
+Improvements
+~~~~~~~~~~~~
+
+- Add missing information in the documentation
+
 Release 2.1 (released Dec 8, 2023)
--------------------------------------
+----------------------------------
 
 Features added
 ~~~~~~~~~~~~~~
