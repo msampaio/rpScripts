@@ -25,6 +25,7 @@ extensions = [
     'sphinx.ext.duration',
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
+    'sphinx.ext.imgconverter',
 ]
 
 templates_path = ['_templates']
