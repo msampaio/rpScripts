@@ -9,6 +9,9 @@ There are multiple ways to install RP Scripts. All of them require dependencies 
 
    pip install -r requirements.txt
 
+
+The graphs generation depends on the `Graphviz <https://www.graphviz.org/>`_  installation.
+
 Binary creation
 ---------------
 
