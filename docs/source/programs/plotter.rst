@@ -25,8 +25,8 @@ The option ``-h`` prints the command help:
 
 .. code-block:: console
 
-    usage: rpscripts plot [-h] [-f IMG_FORMAT] [-r RESOLUTION] [-a] [-u] [-w] [-m]
-                        [-fl] [-c] [-e] [-t] [-p] [-b]
+    usage: rpscripts plot [-h] [-f IMG_FORMAT] [-r RESOLUTION] [-a] [-u] [-w] [-q]
+                        [-v] [-m] [-fl] [-c] [-e] [-t] [-p] [-b]
                         [--minimum_dispersion MINIMUM_DISPERSION]
                         [--maximum_dispersion MAXIMUM_DISPERSION]
                         [--minimum_agglomeration MINIMUM_AGGLOMERATION]
@@ -51,6 +51,10 @@ The option ``-h`` prints the command help:
     -u, --bubble_partitiogram
                             Partitiogram as a bubble chart
     -w, --without_labels  Partitiogram as a bubble chart without labels
+    -q, --parts_density_numbers_time
+                            Parts and density numbers in time
+    -v, --parts_density_numbers_scatter
+                            Parts and density numbers scatter
     -m, --comparative_partitiogram
                             Comparative partitiogram. It demands a previous
                             labeled file. Check rpscripts labels -h' column
@@ -298,6 +302,30 @@ A low value generates a chart similar to :ref:`stairs_style` and :ref:`step_styl
 .. code-block:: console
 
     rpscripts plot --indexogram_slope 1/2 score.json
+
+
+Number of parts and density number
+----------------------------------
+
+The :doc:`plotter` command also generates two charts that expose the number of distinct parts and density number.
+
+The first one is a scatter chart. For building it, use the ``-v`` option:
+
+.. code-block:: console
+
+    rpscripts plot -v score.json
+
+.. figure:: ../../../examples/schumann-opus48no2-simple-part-density_number-scatter.svg
+    :alt: part-density-scatter
+
+The second chart represents both properties in time. For building it use the ``-q`` option:
+
+.. code-block:: console
+
+    rpscripts plot -q score.json
+
+.. figure:: ../../../examples/schumann-opus48no2-simple-part-density_number-time.svg
+    :alt: part-density-scatter
 
 
 All charts

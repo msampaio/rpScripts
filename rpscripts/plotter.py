@@ -614,6 +614,197 @@ class ComparativePartitiogramMaker(AbstractPartitiogramPlotter):
             plotter.save()
 
 
+class SimplePartDensityNumberScatterPlotter(AbstractPlotter):
+    def __init__(self, rpdata: RPData, image_format='svg', with_labels=False, **kwargs) -> None:
+        self.name = 'simple-part-density_number-scatter'
+        super().__init__(rpdata, image_format)
+
+        self.with_labels = with_labels
+        self.bubble_size = 2000
+        self.frequency_analysis = {}
+
+        self.parts_list = self.rpdata.data['Parts']
+
+        self.partitions_labels = []
+        self.y_number_of_parts = []
+        self.x_density_numbers = []
+        self.quantity = []
+
+        # Filter values
+        self.min_nparts = None
+        self.max_nparts = None
+        self.min_density_numbers = None
+        self.max_density_numbers = None
+
+        if kwargs:
+            self.__dict__.update(kwargs)
+
+        total = 0
+        size = len(self.rpdata.partitions)
+
+        for i in range(size):
+            partition_label = self.rpdata.partitions[i]
+            duration = self.rpdata.data['Duration'][i]
+            parts = self.rpdata.data['Parts'][i]
+            number_of_parts = len(parts)
+            density_number = sum(parts)
+            key = (partition_label, density_number, number_of_parts)
+
+            if key not in self.frequency_analysis.keys():
+                self.frequency_analysis.update({key: 0})
+
+            self.frequency_analysis[key] += duration
+            total += duration
+
+        for (p_label, density_number, number_of_parts), dur in self.frequency_analysis.items():
+            self.partitions_labels.append(parse_pow(p_label))
+            self.x_density_numbers.append(density_number)
+            self.y_number_of_parts.append(number_of_parts)
+            self.quantity.append(dur / total)
+
+        if self.check_given_limits():
+            self.data_filter()
+
+    def plot(self):
+        '''Extend AbstractPlotter's method. Set X- and Y-axis labels.'''
+
+        plt.clf()
+        plt.scatter(
+            x=self.x_density_numbers,
+            y=self.y_number_of_parts,
+            s=[float(q * self.bubble_size) for q in self.quantity],
+            # s=DOTS_SIZE
+        )
+
+        plt.xlabel('Density number')
+        plt.ylabel('Number of parts')
+        p = super().plot()
+
+        self.check_labels()
+
+        return p
+
+    def check_labels(self):
+        if self.with_labels:
+            zipped = zip(self.partitions_labels, self.y_number_of_parts, self.x_density_numbers)
+            for v, y, x in zipped:
+                if not x:
+                    x = 0
+                if not v:
+                    v = 0
+                if not y:
+                    y = 0
+                plt.text(x * LABELS_DISTANCE, y * LABELS_DISTANCE , v, fontsize=LABELS_SIZE)
+
+    def check_given_limits(self) -> bool:
+        '''Return True if there are value filters defined.'''
+
+        a = self.min_nparts == None
+        b = self.max_nparts == None
+        c = self.min_density_numbers == None
+        d = self.max_density_numbers == None
+        return not all([a, b, c, d])
+
+    def data_filter(self) -> None:
+        '''Filter the dispersion and agglomeration indexes values for a narrowed plot.'''
+
+        values = [(d, a, q) for d, a, q in zip(self.y_disp, self.x_aggl, self.quantity)]
+
+        if self.min_nparts != None:
+            if self.min_nparts > numpy.nanmin(self.y_disp):
+                values = [(d, a, q) for d, a, q in values if d >= self.min_nparts]
+
+        if self.max_nparts != None:
+            if self.max_nparts < numpy.nanmax(self.y_disp):
+                values = [(d, a, q) for d, a, q in values if d <= self.max_nparts]
+
+        if self.min_density_numbers != None:
+            if self.min_density_numbers > numpy.nanmin(self.y_disp):
+                values = [(d, a, q) for d, a, q in values if a >= self.min_density_numbers]
+
+        if self.max_density_numbers != None:
+            if self.max_density_numbers < numpy.nanmax(self.y_disp):
+                values = [(d, a, q) for d, a, q in values if a <= self.max_density_numbers]
+
+        y_disp = []
+        x_aggl = []
+        quantity = []
+
+        for d, a, q in values:
+            y_disp.append(d)
+            x_aggl.append(a)
+            quantity.append(q)
+
+        self.y_disp = y_disp
+        self.x_aggl = x_aggl
+        self.quantity = quantity
+
+
+class SimplePartDensityNumberInTimePlotter(AbstractTimePlotter):
+    def __init__(self, rpdata: RPData, image_format='svg', show_labels=False) -> None:
+        self.name = 'simple-part-density_number-time'
+        super().__init__(rpdata, image_format, show_labels)
+
+        self.number_of_parts = []
+        self.density_numbers = []
+        self.inverted_density_numbers = []
+
+        for nparts, dn in self.rpdata.get_number_of_parts_and_density_numbers():
+            self.number_of_parts.append(nparts)
+            self.density_numbers.append(dn)
+            self.inverted_density_numbers.append(dn * -1)
+
+        self.index = self.rpdata.data['Index']
+
+        self.y_number_of_parts = self.number_of_parts
+        self.y_number_of_parts.append(self.y_number_of_parts[-1])
+
+        self.y_density_numbers = self.inverted_density_numbers
+        self.y_density_numbers.append(self.y_density_numbers[-1])
+
+        self.legend = ['Number of parts', 'Density number (negative)']
+
+    def xticks_adjust(self):
+        '''Extend AbstractPlotter's xticks_adjust method.
+
+        Rotates xticks.'''
+
+        plt.xticks(rotation=90)
+        return super().xticks_adjust()
+
+    def make_xticks(self) -> None:
+        # get original xticks values
+        original_xticks_values = plt.xticks()[0]
+        inverted_map = {v: k for k, v in self.rpdata.offset_map.items()}
+        offset_points = list(inverted_map.keys())
+
+        new_ticks = list(original_xticks_values)[1:-1]
+
+        new_labels = []
+        for value in new_ticks:
+            go  = find_nearest_smaller(int(value), offset_points)
+            measure_number = inverted_map[go]
+            # TODO: improve local offset (as fraction)
+            local_offset = Fraction(value - go)
+
+            event_location = EventLocation(measure_number=measure_number, offset=local_offset)
+            new_labels.append(event_location.get_str_index())
+
+        plt.xticks(ticks=new_ticks, labels=new_labels)
+
+    def plot(self):
+        plt.clf()
+        plt.plot(self.x_values, self.y_number_of_parts)
+        plt.plot(self.x_values, self.y_density_numbers)
+
+        self.make_xticks()
+
+        plt.ylabel('Values\n<- density number / n. parts ->')
+        plt.legend(self.legend)
+
+        return super().plot()
+
+
 class Subparser(GeneralSubparser):
     '''Implements argparser.'''
 
@@ -627,6 +818,8 @@ class Subparser(GeneralSubparser):
         self.parser.add_argument("-a", "--all", help = "Plot all available charts", action='store_true')
         self.parser.add_argument("-u", "--bubble_partitiogram", help = "Partitiogram as a bubble chart", default=False, action='store_true')
         self.parser.add_argument("-w", "--without_labels", help = "Partitiogram as a bubble chart without labels", default=False, action='store_true')
+        self.parser.add_argument("-q", "--parts_density_numbers_time", help = "Parts and density number in time", default=False, action='store_true')
+        self.parser.add_argument("-v", "--parts_density_numbers_scatter", help = "Parts and density number scatter", default=False, action='store_true')
         self.parser.add_argument("-m", "--comparative_partitiogram", help = "Comparative partitiogram. It demands a previous labeled file. Check rpscripts labels -h' column", default=False, action='store_true')
         self.parser.add_argument("-fl", "--show_form_labels", help = "Draw vertical lines to display given form labels. It demands a previous labeled file. Check rpscripts labels -h' column", default=False, action='store_true')
         self.parser.add_argument("-c", "--close_bubbles", help = "Indexogram with bubbles' closing lines", default=False, action='store_true')
@@ -731,6 +924,17 @@ class Subparser(GeneralSubparser):
             for ind_obj in ind_objs:
                 ind_obj.plot()
                 ind_obj.save()
+
+            ## Parts x density number
+            if args.parts_density_numbers_time:
+                part_obj = SimplePartDensityNumberInTimePlotter(rp_data, image_format, True)
+                part_obj.plot()
+                part_obj.save()
+
+            if args.parts_density_numbers_scatter:
+                part_obj = SimplePartDensityNumberScatterPlotter(rp_data, image_format, True)
+                part_obj.plot()
+                part_obj.save()
 
         except:
             raise CustomException('Something wrong with given JSON file.')

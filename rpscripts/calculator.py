@@ -571,6 +571,7 @@ class ParsemaeSegment(object):
             'Density-number': [], # 6
             'Agglomeration': [], # 7
             'Dispersion': [], # 8
+            'Parts': [], # 9
         }
         values_map = {}
         for parsema in self.parsemae:
@@ -593,6 +594,7 @@ class ParsemaeSegment(object):
             data['Density-number'].append(partition.get_density_number())
             data['Agglomeration'].append(agglomeration)
             data['Dispersion'].append(dispersion)
+            data['Parts'].append(partition.parts)
 
             if partition_str not in values_map.keys():
                 values_map[partition_str] = (agglomeration, dispersion)

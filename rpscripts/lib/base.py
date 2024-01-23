@@ -435,6 +435,7 @@ class RPData(object):
             'Density-number': [], # 6
             'Agglomeration': [], # 7
             'Dispersion': [], # 8
+            'Parts': [], # 9
         }
 
         self.partitions = []
@@ -510,6 +511,11 @@ class RPData(object):
         if partition_str in self.values_map.keys():
             return self.values_map[partition_str]
         raise CustomException('The partition {} is not in the map.'.format(partition_str))
+
+    def get_number_of_parts_and_density_numbers(self) -> list:
+        '''Return a list of tuples with the number of parts and density number of each all the partitions in data.'''
+
+        return [(len(parts), sum(parts)) if parts != [] else (0, 0) for parts in self.data['Parts']]
 
     def get_events_location(self, attribute: str) -> dict:
         '''Return a dictionary with the event locations where the measure number is the dictionary key, and the pair "offset, element", the dictionary value. The `element` is the value in the `attribute` list.

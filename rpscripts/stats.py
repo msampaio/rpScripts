@@ -16,44 +16,83 @@ class Statistics(object):
         self.outname = file_rename(self.rpdata.path, self.image_format, self.name)
         self.subplots = None
         self.dataframe = pandas.DataFrame(rpdata.data)
+        self.data = None
+        self.columns = None
+        self.is_index = False
 
     def get_histograms(self, no_plot:bool, split_labels: bool) -> None:
-        '''Make histogram and print statistical summary of agglomeration and dispersion indexes.'''
+        '''Make histogram and print statistical summary.'''
 
-        cols = ['Agglomeration', 'Dispersion']
+        self.name = '{}-{}'.format(self.name, 'histogram')
+        self.outname = file_rename(self.rpdata.path, self.image_format, self.name)
 
         print('Statistical summary: full')
-        print(self.dataframe[cols].describe().round(2))
+        print(self.data.describe().round(2))
 
         if not no_plot:
-            axes = self.dataframe[cols].hist()
-            for c, ax in zip(cols, axes[0]):
-                ax.set_xlabel('{} index'.format(c))
+            axes = self.data.hist()
+            for c, ax in zip(self.columns, axes[0]):
+                if self.is_index:
+                    ax.set_xlabel('{} index'.format(c))
+                else:
+                    ax.set_xlabel(c)
                 ax.set_ylabel('Number of events')
 
             print('Saving file {}...'.format(self.outname))
             plt.savefig(self.outname)
 
         if split_labels and self.rpdata.labels:
-            self.dataframe['Label'] = self.rpdata.labels
-            new_cols = cols[:]
+            self.data['Label'] = self.rpdata.labels
+            new_cols = self.columns[:]
             new_cols.append('Label')
 
-            _df = self.dataframe[new_cols].groupby('Label')
+            _df = self.data[new_cols].groupby('Label')
             for label, _df in _df:
                 print('\nLabel: {}'.format(label))
                 print(_df.describe().round(2))
 
             if not no_plot:
-                for c in cols:
+                for c in self.columns:
                     plt.clf()
-                    _df = self.dataframe[[c, 'Label']]
+                    _df = self.data[[c, 'Label']]
                     _df.plot.box(column=c, by='Label', grid=True)
-                    plt.ylabel('{} index'.format(c))
+                    if self.is_index:
+                        plt.ylabel('{} index'.format(c))
+                    else:
+                        plt.ylabel(c)
                     plt.title('')
                     plt.xlabel('Labels')
                     plt.tight_layout()
                     plt.savefig(file_rename(self.outname, 'svg', 'label-{}-boxplot').format(c.lower()))
+
+
+class AgglomerationDispersionStatistics(Statistics):
+    def __init__(self, rpdata: RPData, image_format='svg') -> None:
+        name = 'agglomeration-dispersion'
+        self.is_index = True
+        super().__init__(rpdata, name, image_format)
+
+    def get_histograms(self, no_plot:bool, split_labels: bool) -> None:
+        '''Make histogram and print statistical summary of agglomeration and dispersion indexes.'''
+
+        self.columns = ['Agglomeration', 'Dispersion']
+        self.data = self.dataframe[self.columns]
+
+        super().get_histograms(no_plot, split_labels)
+
+
+class PartsDensityNumberStatistics(Statistics):
+    def __init__(self, rpdata: RPData, image_format='svg') -> None:
+        name = 'parts-statistics'
+        super().__init__(rpdata, name, image_format)
+
+    def get_histograms(self, no_plot:bool, split_labels: bool) -> None:
+        '''Make histogram and print statistical summary of number of parts and density number.'''
+
+        self.columns = ['Number of parts', 'Density number']
+        self.data = pandas.DataFrame(self.rpdata.get_number_of_parts_and_density_numbers(), columns=self.columns)
+
+        super().get_histograms(no_plot, split_labels)
 
 
 class Subparser(GeneralSubparser):
@@ -71,5 +110,8 @@ class Subparser(GeneralSubparser):
     def handle(self, args):
         rpdata = RPData(args.filename)
 
-        statistics = Statistics(rpdata, 'histogram', 'svg')
-        statistics.get_histograms(args.no_plot, args.labels)
+        ad_statistics = AgglomerationDispersionStatistics(rpdata, 'svg')
+        ad_statistics.get_histograms(args.no_plot, args.labels)
+
+        pc_statistics = PartsDensityNumberStatistics(rpdata, 'svg')
+        pc_statistics.get_histograms(args.no_plot, args.labels)

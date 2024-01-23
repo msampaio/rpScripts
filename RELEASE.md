@@ -2,6 +2,9 @@
 
 ## Next release
 
+### Features added
+- Charts of number of parts and density numbers values.
+
 ### Improvements
 
 - Add missing information in the documentation.
