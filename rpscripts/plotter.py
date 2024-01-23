@@ -30,14 +30,17 @@ class AbstractPlotter(object):
         self.outname = file_rename(self.rpdata.path, self.image_format, self.name)
         self.name = None
         self.subplots = None
+        self.figure = None
+        self.axis = None
+        self.figure, self.axis = plt.subplots()
 
     def plot(self) -> None:
         '''Plot Setup.
 
         Depends on the extended classes implementation.'''
 
-        plt.grid()
-        f = plt.subplot()
+        self.axis.grid()
+        f = self.figure.axes
         self.xticks_adjust()
         self.subplots = pickle.dumps(f)
         return None
@@ -114,12 +117,14 @@ class AbstractTimePlotter(AbstractPlotter):
 
         Rotates xticks.'''
 
-        plt.xticks(rotation=90)
-        return super().xticks_adjust()
+        labels = self.axis.get_xticklabels()
+        self.axis.set_xticklabels(labels, rotation=90)
+        self.figure.set_tight_layout(True)
+        return super()
 
     def make_xticks(self) -> None:
         # get original xticks values
-        original_xticks_values = plt.xticks()[0]
+        original_xticks_values = self.axis.get_xticks()
         inverted_map = {v: k for k, v in self.rpdata.offset_map.items()}
         offset_points = list(inverted_map.keys())
 
@@ -135,19 +140,19 @@ class AbstractTimePlotter(AbstractPlotter):
             event_location = EventLocation(measure_number=measure_number, offset=local_offset)
             new_labels.append(event_location.get_str_index())
 
-        plt.xticks(ticks=new_ticks, labels=new_labels)
+        self.axis.set_xticks(ticks=new_ticks, labels=new_labels)
 
     def plot(self):
         '''Extend AbstractPlotter's method. Set X-axis label and add optional vertical lines for labels if they are available in RPData.'''
 
-        yvals = plt.yticks()[0]
+        yvals = self.axis.get_yticks()
         ymin = yvals[0]
         ymax = yvals[-1]
         if self.labels_vertical_lines:
             for dic in self.labels_vertical_lines:
-                plt.vlines(x=dic['offset'], ymin=ymin, ymax=ymax, colors='darkmagenta')
-                plt.text(x=dic['offset'] + 2, y=ymin + 1, s=dic['label'], rotation='vertical')
-        plt.xlabel('Positions (measure number + offset)')
+                self.axis.vlines(x=dic['offset'], ymin=ymin, ymax=ymax, colors='darkmagenta')
+                self.axis.text(x=dic['offset'] + 2, y=ymin + 1, s=dic['label'], rotation='vertical')
+        self.axis.set_xlabel('Positions (measure number + offset)')
 
         return super().plot()
 
@@ -204,10 +209,10 @@ class AbstractPartitiogramPlotter(AbstractPlotter):
     def plot(self):
         '''Extend AbstractPlotter's method. Set X- and Y-axis labels.'''
 
-        plt.xlabel('Agglomeration index')
-        plt.ylabel('Dispersion index')
-        p = super().plot()
-        return p
+        self.axis.set_xlabel('Agglomeration index')
+        self.axis.set_ylabel('Dispersion index')
+
+        return super().plot()
 
     def check_labels(self):
         if self.with_labels:
@@ -219,7 +224,7 @@ class AbstractPartitiogramPlotter(AbstractPlotter):
                     v = 0
                 if not y:
                     y = 0
-                plt.text(x * LABELS_DISTANCE, y * LABELS_DISTANCE , v, fontsize=LABELS_SIZE)
+                self.axis.text(x * LABELS_DISTANCE, y * LABELS_DISTANCE , v, fontsize=LABELS_SIZE)
 
     def check_given_limits(self) -> bool:
         '''Return True if there are value filters defined.'''
@@ -355,8 +360,8 @@ class SimplePartitiogramPlotter(AbstractPartitiogramPlotter):
     def plot(self):
         '''Extend AbstractPartitiogramPlotter's method. Create scatter plot.'''
 
-        plt.clf()
-        plt.scatter(
+        # plt.clf()
+        self.axis.scatter(
             x=self.x_aggl,
             y=self.y_disp,
             s=DOTS_SIZE
@@ -374,8 +379,8 @@ class BubblePartitiogramPlotter(AbstractPartitiogramPlotter):
     def plot(self):
         '''Extend AbstractPartitiogramPlotter's method. Create scatter plot.'''
 
-        plt.clf()
-        plt.scatter(
+        # plt.clf()
+        self.axis.scatter(
             x=self.x_aggl,
             y=self.y_disp,
             s=[float(q * self.bubble_size) for q in self.quantity],
@@ -425,7 +430,7 @@ class ComparativePartitiogramPlotter(AbstractPartitiogramPlotter):
             (g2_label, g2),
         ]
 
-        plt.clf()
+        # plt.clf()
 
         for group_label, partitions in groups:
             x_values = []
@@ -437,7 +442,7 @@ class ComparativePartitiogramPlotter(AbstractPartitiogramPlotter):
                 p_as_pow = parse_pow(p)
                 if p_as_pow not in partitions_map.keys():
                     partitions_map[p_as_pow] = [_a, _d]
-            plt.scatter(
+            self.axis.scatter(
                 x=x_values,
                 y=y_values,
                 label=group_label,
@@ -451,9 +456,9 @@ class ComparativePartitiogramPlotter(AbstractPartitiogramPlotter):
                     _a = 0
                 if not _d:
                     _d = 0
-                plt.text(_a * LABELS_DISTANCE, _d *LABELS_DISTANCE, p, fontsize=LABELS_SIZE)
+                self.axis.text(_a * LABELS_DISTANCE, _d *LABELS_DISTANCE, p, fontsize=LABELS_SIZE)
 
-        plt.legend(title='Label')
+        self.axis.legend(title='Label')
 
         return super().plot()
 
@@ -466,20 +471,20 @@ class SimpleIndexogramPlotter(AbstractIndexogramPlotter):
     def plot(self):
         def draw_vertical_line(pair, x):
             aggl, disp = pair
-            plt.vlines(x=x, ymin=aggl, ymax=disp, linestyles='dotted', colors='C3')
+            self.axis.vlines(x=x, ymin=aggl, ymax=disp, linestyles='dotted', colors='C3')
 
         # Get new values with slopes
         x_values, global_offsets, y_disp, y_aggl = self._auxiliary_slope_add()
 
         # The simple plot
-        plt.clf()
-        plt.plot(x_values, y_aggl)
-        plt.plot(x_values, y_disp)
+        # plt.clf()
+        self.axis.plot(x_values, y_aggl)
+        self.axis.plot(x_values, y_disp)
 
         self.make_xticks()
 
-        plt.ylabel('Values\n<- aggl./disp. ->')
-        plt.legend(self.legend)
+        self.axis.set_ylabel('Values\n<- aggl./disp. ->')
+        self.axis.legend(self.legend)
 
         # draw vertical lines to close the bubbles
         if self.close_bubbles:
@@ -512,15 +517,15 @@ class StemIndexogramPlotter(AbstractIndexogramPlotter):
 
     def plot(self):
         # The stem plot
-        plt.clf()
-        plt.stem(self.x_values, self.y_aggl, markerfmt=' ')
-        plt.stem(self.x_values, self.y_disp, markerfmt=' ')
+        # plt.clf()
+        self.axis.stem(self.x_values, self.y_aggl, markerfmt=' ')
+        self.axis.stem(self.x_values, self.y_disp, markerfmt=' ')
 
         self.make_xticks()
 
-        plt.xlabel('Positions (measure + offset)')
-        plt.ylabel('Values\n<- aggl./disp. ->')
-        plt.legend(self.legend)
+        self.axis.set_xlabel('Positions (measure + offset)')
+        self.axis.set_ylabel('Values\n<- aggl./disp. ->')
+        self.axis.legend(self.legend)
 
         return super().plot()
 
@@ -532,15 +537,15 @@ class StairsIndexogramPlotter(AbstractIndexogramPlotter):
 
     def plot(self):
         # The stem plot
-        plt.clf()
-        plt.stairs(self.y_aggl[:-1], self.x_values)
-        plt.stairs(self.y_disp[:-1], self.x_values)
+        # plt.clf()
+        self.axis.stairs(self.y_aggl[:-1], self.x_values)
+        self.axis.stairs(self.y_disp[:-1], self.x_values)
 
         self.make_xticks()
 
-        plt.xlabel('Positions (measure + offset)')
-        plt.ylabel('Values\n<- aggl./disp. ->')
-        plt.legend(self.legend)
+        self.axis.set_xlabel('Positions (measure + offset)')
+        self.axis.set_ylabel('Values\n<- aggl./disp. ->')
+        self.axis.legend(self.legend)
 
         return super().plot()
 
@@ -552,15 +557,15 @@ class StepIndexogramPlotter(AbstractIndexogramPlotter):
 
     def plot(self):
         # The step plot
-        plt.clf()
-        plt.step(x=self.x_values, y=self.y_aggl, where='post')
-        plt.step(x=self.x_values, y=self.y_disp, where='post')
+        # plt.clf()
+        self.axis.step(x=self.x_values, y=self.y_aggl, where='post')
+        self.axis.step(x=self.x_values, y=self.y_disp, where='post')
 
         self.make_xticks()
 
-        plt.xlabel('Positions (measure number + offset)')
-        plt.ylabel('Values\n<- aggl./disp. ->')
-        plt.legend(self.legend)
+        self.axis.set_xlabel('Positions (measure number + offset)')
+        self.axis.set_ylabel('Values\n<- aggl./disp. ->')
+        self.axis.legend(self.legend)
 
         return super().plot()
 
@@ -576,20 +581,20 @@ class CombinedIndexogramPlotter(AbstractIndexogramPlotter):
 
         y_values = [aux_sum_if_none(d, a) for d, a in zip(y_disp, y_aggl)]
 
-        plt.clf()
-        plt.plot(x_values, y_values)
+        # plt.clf()
+        self.axis.plot(x_values, y_values)
 
         self.make_xticks()
 
-        plt.xlabel('Positions (measure + offset)')
-        plt.ylabel('Values\n(d - a)')
-        plt.legend(self.legend)
+        self.axis.set_xlabel('Positions (measure + offset)')
+        self.axis.set_ylabel('Values\n(d - a)')
+        self.axis.legend(self.legend)
 
         return super().plot()
 
 
 class ComparativePartitiogramMaker(AbstractPartitiogramPlotter):
-    def __init__(self, rpdata: RPData, image_format='svg', with_labels=True) -> None:
+    def __init__(self, rpdata: RPData, image_format='svg', with_labels=True, **kwargs) -> None:
         self.name = ''
         super().__init__(rpdata, image_format, with_labels)
         self.plotters = []
@@ -668,16 +673,16 @@ class SimplePartDensityNumberScatterPlotter(AbstractPlotter):
     def plot(self):
         '''Extend AbstractPlotter's method. Set X- and Y-axis labels.'''
 
-        plt.clf()
-        plt.scatter(
+        # plt.clf()
+        self.axis.scatter(
             x=self.x_density_numbers,
             y=self.y_number_of_parts,
             s=[float(q * self.bubble_size) for q in self.quantity],
             # s=DOTS_SIZE
         )
 
-        plt.xlabel('Density number')
-        plt.ylabel('Number of parts')
+        self.axis.set_xlabel('Density number')
+        self.axis.set_ylabel('Number of parts')
         p = super().plot()
 
         self.check_labels()
@@ -694,7 +699,7 @@ class SimplePartDensityNumberScatterPlotter(AbstractPlotter):
                     v = 0
                 if not y:
                     y = 0
-                plt.text(x * LABELS_DISTANCE, y * LABELS_DISTANCE , v, fontsize=LABELS_SIZE)
+                self.axis.text(x * LABELS_DISTANCE, y * LABELS_DISTANCE , v, fontsize=LABELS_SIZE)
 
     def check_given_limits(self) -> bool:
         '''Return True if there are value filters defined.'''
@@ -790,17 +795,17 @@ class SimplePartDensityNumberInTimePlotter(AbstractTimePlotter):
             event_location = EventLocation(measure_number=measure_number, offset=local_offset)
             new_labels.append(event_location.get_str_index())
 
-        plt.xticks(ticks=new_ticks, labels=new_labels)
+        self.axis.set_xticks(ticks=new_ticks, labels=new_labels)
 
     def plot(self):
-        plt.clf()
-        plt.plot(self.x_values, self.y_number_of_parts)
-        plt.plot(self.x_values, self.y_density_numbers)
+        # plt.clf()
+        self.axis.plot(self.x_values, self.y_number_of_parts)
+        self.axis.plot(self.x_values, self.y_density_numbers)
 
         self.make_xticks()
 
-        plt.ylabel('Values\n<- density number / n. parts ->')
-        plt.legend(self.legend)
+        self.axis.set_ylabel('Values\n<- density number / n. parts ->')
+        self.axis.legend(self.legend)
 
         return super().plot()
 
@@ -908,6 +913,10 @@ class Subparser(GeneralSubparser):
             if args.all:
                 for cls in indexogram_classes:
                     ind_objs.append(cls(rp_data, image_format, close_bubbles, show_form_labels))
+
+                ind_objs.append(SimplePartDensityNumberInTimePlotter(rp_data, image_format, True))
+                ind_objs.append(SimplePartDensityNumberScatterPlotter(rp_data, image_format, True))
+
             elif args.stem:
                 ind_objs.append(StemIndexogramPlotter(rp_data, image_format, close_bubbles, show_form_labels))
             elif args.stairs:
