@@ -3,11 +3,13 @@
 ## Next release
 
 ### Features added
+- Skip and step identification in the Textural classes graph.
 - Charts of number of parts and density numbers values.
 
 ### Improvements
 
 - Add missing information in the documentation.
+- Add exception text for missing attributes.
 
 ## 2.1
 

@@ -6,6 +6,7 @@ Moreira, Daniel. 2019. "Textural Design: A Compositional Theory for the Organiza
 '''
 
 from collections import Counter
+import itertools
 import matplotlib.pyplot as plt
 
 from rpscripts.plotter import AbstractTimePlotter
@@ -28,6 +29,13 @@ def get_partition_texture_class(str_partition: str) -> str:
     partition = ExtendedPartition(str_partition)
     return partition.get_texture_class()
 
+
+def are_classes_neighbors(class1: str, class2: str) -> bool:
+    '''Check if both classes are neighbors.'''
+
+    ind1 = TEXTURAL_CLASSES.index(class1)
+    ind2 = TEXTURAL_CLASSES.index(class2)
+    return ind1 + 1 == ind2 or ind1 - 1 == ind2
 
 # Classes
 
@@ -149,10 +157,18 @@ class Subparser(GeneralSubparser):
             tclass_plot.plot()
             tclass_plot.save()
 
+        # Colors: https://digitalsynopsis.com/design/minimal-web-color-palettes-combination-hex-code/
         if not args.no_graph:
+            relations = {
+                (a, b): 'solid' if are_classes_neighbors(a, b) else 'dashed'
+             for a, b in itertools.permutations(TEXTURAL_CLASSES, 2)}
+            # relations = {
+            #     (a, b): '#C06C84' if are_classes_neighbors(a, b) else '#355C7D'
+            #  for a, b in itertools.permutations(TEXTURAL_CLASSES, 2)}
+
             figname = file_rename(args.filename, 'gv', 'classes-graph')
             print('Saving texture classes graph in {}...'.format(figname))
-            dot = rpdata.make_class_graph('tclass')
+            dot = rpdata.make_class_graph('tclass', relations)
             dot.render(figname, format='svg')
 
         if args.counting_chart:

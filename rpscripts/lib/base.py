@@ -259,7 +259,7 @@ def aux_sum_if_none(a, b):
 
 ## Graph functions
 
-def make_general_graph(labels: list, name: str) -> graphviz.Digraph:
+def make_general_graph(labels: list, name: str, relations=None) -> graphviz.Digraph:
     '''Return a `graphviz.Digraph` with the adjacent values of a given list of labels.'''
 
     labels_pairs = set()
@@ -269,8 +269,13 @@ def make_general_graph(labels: list, name: str) -> graphviz.Digraph:
         if previous_label and next_label and previous_label != next_label:
             labels_pairs.add((previous_label, next_label))
     dot = graphviz.Digraph(comment=name)
+
     for prev, nxt in sorted(labels_pairs):
-        dot.edge(prev, nxt)
+        if relations:
+            rel = relations[tuple([prev, nxt])]
+            dot.edge(prev, nxt, style=rel)
+        else:
+            dot.edge(prev, nxt)
 
     return dot
 
@@ -473,8 +478,13 @@ class RPData(object):
         self.data = convert_texture_data_from_json(data['texture_data'])
         self.offset_map = {k: parse_fraction(v) for k, v in data['offset_map'].items()}
         self.values_map = data['values_map']
-        for attr in self.attributes_list:
-            self.__setattr__(attr, data[attr])
+
+        try:
+            for attr in self.attributes_list:
+                self.__setattr__(attr, data[attr])
+        except:
+            raise CustomException('There is at least one missing attribute in the given JSON file. Please, regenerate it running `rpscripts calc` on its respective digital score file.')
+
         self.labels = data['labels']
         self.size = len(self.partitions)
 
@@ -557,11 +567,11 @@ class RPData(object):
 
         return new_rpdata
 
-    def make_class_graph(self, attribute: str) -> graphviz.Digraph:
+    def make_class_graph(self, attribute: str, relations=None) -> graphviz.Digraph:
         '''Return a `graphviz.Digraph` with the adjacent values of a list of values stored in the given `attribute`.'''
 
         labels = self.__getattribute__(attribute)
-        return make_general_graph(labels, attribute.capitalize())
+        return make_general_graph(labels, attribute.capitalize(), relations)
 
     def get_frequency_counter(self, attribute: str, proportional=True) -> dict:
         '''Return a frequency counter of the values of a given attribute.'''
@@ -601,6 +611,7 @@ class RPData(object):
             counter = {k: v / n for k, v in counter.items()}
         counter = {k: v for k, v in sorted(counter.items(), key=lambda item: item[1], reverse=True)}
         return counter
+
 
 class GeneralSubparser(object):
     '''Argparse subparser abstract class.'''
