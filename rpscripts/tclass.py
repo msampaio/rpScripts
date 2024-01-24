@@ -90,11 +90,10 @@ class ExtendedRPData(RPData):
 
         counter = Counter(self.tclass)
         data = [counter[t] for t in TEXTURAL_CLASSES]
-        plt.clf()
-        plt.bar(TEXTURAL_CLASSES, data)
-        plt.ylabel('Number of events')
-        plt.xlabel('Textural class')
-        plt.grid()
+        self.axis.bar(TEXTURAL_CLASSES, data)
+        self.axis.ylabel('Number of events')
+        self.axis.xlabel('Textural class')
+        self.axis.grid()
         if not filename:
             filename = file_rename(self.path, 'svg', 'classes-counter')
         plt.savefig(filename)
@@ -111,8 +110,7 @@ class TexturalClassPlot(AbstractTimePlotter):
         # x_values = rpdata.data['Global offset']
         y_vals = [TEXTURAL_CLASSES.index(x) for x in self.rpdata.tclass]
 
-        plt.clf()
-        plt.plot(self.x_values[:-1], y_vals)
+        self.axis.plot(self.x_values[:-1], y_vals)
 
         self.make_xticks()
 
@@ -123,11 +121,11 @@ class TexturalClassPlot(AbstractTimePlotter):
         yticks_labels = TEXTURAL_CLASSES[:]
         yticks_labels.insert(0, '')
         yticks_labels.append('')
-        plt.yticks(ticks=yticks_ticks, labels=yticks_labels)
+        self.axis.set_yticks(ticks=yticks_ticks, labels=yticks_labels)
 
 
-        plt.ylabel('Partitions classes')
-        plt.xlabel('Positions (measure number + offset)')
+        self.axis.set_ylabel('Partitions classes')
+        self.axis.set_xlabel('Positions (measure number + offset)')
         return super().plot()
 
 
