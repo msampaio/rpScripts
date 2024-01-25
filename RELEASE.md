@@ -3,6 +3,7 @@
 ## Next release
 
 ### Features added
+- New textural contour calculator and plotter
 - Skip and step identification in the Textural classes graph.
 - Charts of number of parts and density numbers values.
 
