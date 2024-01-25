@@ -15,6 +15,7 @@ from . import trimmer
 from . import utils
 
 from . import tclass
+from . import tcontour
 
 def main() -> None:
     '''Parse the given command line arguments.'''
@@ -35,6 +36,7 @@ def main() -> None:
     # Add new custom arg parsers here
     parsers.extend([
         tclass.Subparser,
+        tcontour.Subparser,
     ])
 
     main_parser = argparse.ArgumentParser(

@@ -92,6 +92,14 @@ rpscripts.tclass module
    :undoc-members:
    :show-inheritance:
 
+rpscripts.tcontour module
+-------------------------
+
+.. automodule:: rpscripts.tcontour
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 rpscripts.trimmer module
 ------------------------
 
