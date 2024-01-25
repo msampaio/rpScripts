@@ -68,7 +68,7 @@ Use the ``--lowess_degree`` option to set up the LOWESS degree. The default valu
 
 
 .. figure:: ../../../examples/schumann-opus48no2-complexity-lowess.svg
-    :alt: labeled-indexogram
+    :alt: complexity-lowess-chart
 
     Textural complexity with LOWESS
 
@@ -77,13 +77,13 @@ Use the ``--lowess_degree`` option to set up the LOWESS degree. The default valu
 Form labels displaying
 ----------------------
 
-For the labels displaying, use the ``-fl`` option. It adds vertical lines in the indexogram. It demands a labeled ``JSON`` file. The :doc:`labeler` program generates the labeled file.
+For the labels displaying, use the ``-fl`` option. It adds vertical lines in the complexity chart. It demands a labeled ``JSON`` file. The :doc:`labeler` program generates the labeled file.
 
 .. code-block:: console
 
     rpscripts tcontour -fl score.json
 
 .. figure:: ../../../examples/schumann-opus48no2-complexity-labeled.svg
-    :alt: labeled-indexogram
+    :alt: labeled-complexity-chart
 
     Textural complexity with form labels indications

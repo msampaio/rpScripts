@@ -17,7 +17,7 @@ TClass calculates the textural classes and returns two charts: textural classes 
     Textural classes in time
 
 .. figure:: ../../../examples/schumann-opus48no2-classes-graph.gv.svg
-    :alt: indexogram
+    :alt: textural-class-graph
 
     Textural classes graph. Solid lines represents steps, and dashed lines, skips.
 
@@ -65,16 +65,16 @@ Use the ``-ng`` option to omit texture class graph generation.
 Form labels displaying
 ----------------------
 
-For the labels displaying, use the ``-fl`` option. It adds vertical lines in the indexogram. It demands a labeled ``JSON`` file. The :doc:`labeler` program generates the labeled file.
+For the labels displaying, use the ``-fl`` option. It adds vertical lines in the texture class chart. It demands a labeled ``JSON`` file. The :doc:`labeler` program generates the labeled file.
 
 .. code-block:: console
 
     rpscripts tclass -fl score.json
 
 .. figure:: ../../../examples/schumann-opus48no2-classes-labeled.svg
-    :alt: labeled-indexogram
+    :alt: labeled-class-chart
 
-    Indexogram with form labels indications
+    Textural class chart with form labels indications
 
 Counting chart
 --------------
