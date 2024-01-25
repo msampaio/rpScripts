@@ -4,10 +4,19 @@ Changelog
 Next Release
 ------------
 
+Features added
+~~~~~~~~~~~~~~
+
+- New textural contour calculator and plotter
+- Skip and step identification in the Textural classes graph.
+- Charts of number of parts and density numbers values.
+
 Improvements
 ~~~~~~~~~~~~
 
-- Add missing information in the documentation
+- Add missing information in the documentation.
+- Add exception text for missing attributes.
+- Improve the Matplotlib axis usage in the plotter module.
 
 Release 2.1 (released Dec 8, 2023)
 ----------------------------------
