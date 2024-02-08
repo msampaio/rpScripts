@@ -769,38 +769,10 @@ class SimplePartDensityNumberInTimePlotter(AbstractTimePlotter):
 
         self.legend = ['Number of parts', 'Density number (negative)']
 
-    def xticks_adjust(self):
-        '''Extend AbstractPlotter's xticks_adjust method.
-
-        Rotates xticks.'''
-
-        plt.xticks(rotation=90)
-        return super().xticks_adjust()
-
-    def make_xticks(self) -> None:
-        # get original xticks values
-        original_xticks_values = plt.xticks()[0]
-        inverted_map = {v: k for k, v in self.rpdata.offset_map.items()}
-        offset_points = list(inverted_map.keys())
-
-        new_ticks = list(original_xticks_values)[1:-1]
-
-        new_labels = []
-        for value in new_ticks:
-            go  = find_nearest_smaller(int(value), offset_points)
-            measure_number = inverted_map[go]
-            # TODO: improve local offset (as fraction)
-            local_offset = Fraction(value - go)
-
-            event_location = EventLocation(measure_number=measure_number, offset=local_offset)
-            new_labels.append(event_location.get_str_index())
-
-        self.axis.set_xticks(ticks=new_ticks, labels=new_labels)
-
     def plot(self):
         # plt.clf()
-        self.axis.plot(self.x_values, self.y_number_of_parts)
-        self.axis.plot(self.x_values, self.y_density_numbers)
+        self.axis.step(self.x_values, self.y_number_of_parts)
+        self.axis.step(self.x_values, self.y_density_numbers)
 
         self.make_xticks()
 
@@ -914,8 +886,8 @@ class Subparser(GeneralSubparser):
                 for cls in indexogram_classes:
                     ind_objs.append(cls(rp_data, image_format, close_bubbles, show_form_labels))
 
-                ind_objs.append(SimplePartDensityNumberInTimePlotter(rp_data, image_format, True))
-                ind_objs.append(SimplePartDensityNumberScatterPlotter(rp_data, image_format, True))
+                ind_objs.append(SimplePartDensityNumberInTimePlotter(rp_data, image_format, show_form_labels))
+                ind_objs.append(SimplePartDensityNumberScatterPlotter(rp_data, image_format, show_form_labels))
 
             elif args.stem:
                 ind_objs.append(StemIndexogramPlotter(rp_data, image_format, close_bubbles, show_form_labels))
@@ -936,12 +908,12 @@ class Subparser(GeneralSubparser):
 
             ## Parts x density number
             if args.parts_density_numbers_time:
-                part_obj = SimplePartDensityNumberInTimePlotter(rp_data, image_format, True)
+                part_obj = SimplePartDensityNumberInTimePlotter(rp_data, image_format, show_form_labels)
                 part_obj.plot()
                 part_obj.save()
 
             if args.parts_density_numbers_scatter:
-                part_obj = SimplePartDensityNumberScatterPlotter(rp_data, image_format, True)
+                part_obj = SimplePartDensityNumberScatterPlotter(rp_data, image_format, show_form_labels)
                 part_obj.plot()
                 part_obj.save()
 
