@@ -198,7 +198,7 @@ def split_score(filename: str) -> music21.stream.Score:
 
     parts = []
     try:
-        sco = music21.converter.parse(filename)
+        sco = music21.converter.parse(filename, quantizePost=False)
     except:
         raise CustomException('Error on given score parsing.')
 
