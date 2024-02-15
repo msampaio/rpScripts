@@ -218,7 +218,7 @@ Use the ``-e`` option to plot indexogram in stem style:
 Step style
 ^^^^^^^^^^
 
-Use the ``-p`` option to plot indexogram in stem style:
+Use the ``-p`` option to plot indexogram in step style:
 
 .. code-block:: console
 

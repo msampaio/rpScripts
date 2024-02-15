@@ -24,7 +24,7 @@ TEXTURAL_CLASSES = ['R', 'L', 'B', 'Lx', 'LB', 'By', 'LxB', 'LBy', 'LxBy']
 # Auxiliary functions
 
 def get_partition_texture_class(str_partition: str) -> str:
-    '''Get the texture class of a given partition.'''
+    '''Get the textural class of a given partition.'''
 
     partition = ExtendedPartition(str_partition)
     return partition.get_texture_class()
@@ -43,7 +43,7 @@ class ExtendedPartition(Partition):
     '''Extend Partition class to handle partition classes.'''
 
     def get_texture_class(self):
-        '''Get the partition's texture class.'''
+        '''Get the partition's textural class.'''
 
         lines = 0
         blocks = 0
@@ -141,7 +141,7 @@ class Subparser(GeneralSubparser):
         self.program_help = 'Textural class calculator and plotter'
 
     def add_arguments(self) -> None:
-        self.parser.add_argument("-np", "--no_plot", help='No texture class chart', default=False, action='store_true')
+        self.parser.add_argument("-np", "--no_plot", help='No textural class chart', default=False, action='store_true')
         self.parser.add_argument("-ng", "--no_graph", help='No graph chart', default=False, action='store_true')
         self.parser.add_argument("-fl", "--show_form_labels", help = "Draw vertical lines to display given form labels. It demands a previous labeled file. Check rpscripts labels -h' column", default=False, action='store_true')
         self.parser.add_argument("-s", "--as_step", help='Step chart', default=False, action='store_true')
@@ -154,7 +154,7 @@ class Subparser(GeneralSubparser):
 
         if not args.no_plot:
             figname = file_rename(args.filename, 'svg', 'classes')
-            print('Saving texture classes plot in {}...'.format(figname))
+            print('Saving textural classes plot in {}...'.format(figname))
 
             tclass_plot = TexturalClassPlot(rpdata, 'svg', args.show_form_labels, args.as_step)
             tclass_plot.plot()
@@ -170,11 +170,11 @@ class Subparser(GeneralSubparser):
             #  for a, b in itertools.permutations(TEXTURAL_CLASSES, 2)}
 
             figname = file_rename(args.filename, 'gv', 'classes-graph')
-            print('Saving texture classes graph in {}...'.format(figname))
+            print('Saving textural classes graph in {}...'.format(figname))
             dot = rpdata.make_class_graph('tclass', relations)
             dot.render(figname, format='svg')
 
         if args.counting_chart:
             figname = file_rename(args.filename, 'svg', 'classes-counter')
-            print('Saving texture classes counting chart in {}...'.format(figname))
+            print('Saving textural classes counting chart in {}...'.format(figname))
             rpdata.make_counting_chart(figname)

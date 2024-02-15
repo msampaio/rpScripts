@@ -36,7 +36,7 @@ The option ``-h`` prints the command help:
 
     options:
     -h, --help            show this help message and exit
-    -np, --no_plot        No texture class chart
+    -np, --no_plot        No textural class chart
     -ng, --no_graph       No graph chart
     -fl, --show_form_labels
                             Draw vertical lines to display given form labels. It
@@ -44,19 +44,19 @@ The option ``-h`` prints the command help:
                             labels -h' column
     -c, --counting_chart  Counting chart
 
-Omit texture class chart generation
------------------------------------
+Omit textural classes chart generation
+--------------------------------------
 
-Use the ``-np`` option to omit texture class in time chart generation.
+Use the ``-np`` option to omit textural classes in time chart generation.
 
 .. code-block:: console
 
     rpscripts tclass -np score.json
 
-Omit texture class graph generation
------------------------------------
+Omit textural classes graph generation
+--------------------------------------
 
-Use the ``-ng`` option to omit texture class graph generation.
+Use the ``-ng`` option to omit textural classes graph generation.
 
 .. code-block:: console
 
@@ -65,7 +65,7 @@ Use the ``-ng`` option to omit texture class graph generation.
 Form labels displaying
 ----------------------
 
-For the labels displaying, use the ``-fl`` option. It adds vertical lines in the texture class chart. It demands a labeled ``JSON`` file. The :doc:`labeler` program generates the labeled file.
+For the labels displaying, use the ``-fl`` option. It adds vertical lines in the textural classes chart. It demands a labeled ``JSON`` file. The :doc:`labeler` program generates the labeled file.
 
 .. code-block:: console
 
@@ -74,7 +74,7 @@ For the labels displaying, use the ``-fl`` option. It adds vertical lines in the
 .. figure:: ../../../examples/schumann-opus48no2-classes-labeled.svg
     :alt: labeled-class-chart
 
-    Textural class chart with form labels indications
+    Textural classes chart with form labels indications
 
 Counting chart
 --------------
