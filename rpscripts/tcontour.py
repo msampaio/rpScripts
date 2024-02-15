@@ -218,6 +218,18 @@ class ContourPlot(AbstractTimePlotter):
             self.axis.plot(self.x_values[:-1], lowess)
             self.axis.legend(['Contour', 'Lowess {}'.format(self.lowess_degree)])
 
+        # Show only integer yticks
+        ypositions = []
+        ylabels = []
+        for tobj in self.axis.get_yticklabels():
+            yval = tobj._y
+            ypositions.append(yval)
+            ytick = ''
+            if int(abs(int(yval))) == abs(yval):
+                ytick = str(int(yval))
+            ylabels.append(ytick)
+        self.axis.set_yticks(ypositions, ylabels)
+
         self.axis.set_ylabel('Contour points')
         self.make_xticks()
 
