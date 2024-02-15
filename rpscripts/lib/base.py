@@ -20,6 +20,7 @@ from ..config import ENCODING
 RPDATA_ATTRIBUTES = [
     'partitions',
     'tclass',
+    'tcontour',
 ]
 
 ## Pow conversion functions

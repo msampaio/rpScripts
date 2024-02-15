@@ -181,7 +181,7 @@ class ExtendedRPData(RPData):
 
     def add_complexity_data(self, contour: Contour):
         rows = contour.level_sublevel_seq
-        self.complexity = rows
+        self.tcontour = rows
         self.save_to_file()
 
 
