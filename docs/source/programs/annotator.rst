@@ -29,15 +29,35 @@ Option ``-h`` returns the program's help:
     -h, --help            show this help message and exit
     -s SCORE_FILENAME, --score_filename SCORE_FILENAME
                             digital score filename (XML, MXL, MIDI and KRN)
-    -t TYPE, --type TYPE  type of annotation (partitions)
+    -t TYPE, --type TYPE  type of annotation (partitions, tclass, tcontour)
 
 Types
 -----
 
-Annotator program can annotate multiple types of data into the given digital score. The default type is ``partitions``. Future versions will provide other data types to annotate.
+Annotator program can annotate multiple types of data into the given digital score. The default type is ``partitions``.
 
 The ``-t`` option defines the type of annotation:
 
+Textural class
+~~~~~~~~~~~~~~
+
 .. code-block:: console
 
-    rpscripts annotate -t partitions -s score.xml score.json
+    rpscripts annotate -t tclass -s score.xml score.json
+
+.. figure:: ../../../examples/schumann-opus48no2-annotated-tclass.svg
+    :alt: annotated-score-tclass
+
+    Annotated score (tclass)
+
+Textural complexity
+~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: console
+
+    rpscripts annotate -t tcontour -s score.xml score.json
+
+.. figure:: ../../../examples/schumann-opus48no2-annotated-tcontour.svg
+    :alt: annotated-score-tcontour
+
+    Annotated score (tcontour)
