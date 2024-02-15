@@ -1,6 +1,6 @@
 # Releases
 
-## Next release
+## 2.2
 
 ### Features added
 - New textural contour calculator and plotter

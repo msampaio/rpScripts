@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Next Release
-------------
+Release 2.2 (released Feb 15, 2024)
+-----------------------------------
 
 Features added
 ~~~~~~~~~~~~~~

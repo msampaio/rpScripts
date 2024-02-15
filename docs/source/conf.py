@@ -12,10 +12,10 @@ sys.path.insert(0, path)
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'RP Scripts'
-copyright = '2023, Marcos da Silva Sampaio'
+copyright = '2024, Marcos da Silva Sampaio'
 author = 'Marcos da Silva Sampaio'
-version = '2.1'
-release = '2.1'
+version = '2.2'
+release = '2.2'
 project_copyright = 'GPLv3'
 
 # -- General configuration ---------------------------------------------------
