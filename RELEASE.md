@@ -12,6 +12,7 @@
 - Add missing information in the documentation.
 - Add exception text for missing attributes.
 - Improve the Matplotlib axis usage in the plotter module.
+- Add an option for generating a textural class chart in step style.
 
 ## 2.1
 
