@@ -25,7 +25,7 @@ The option ``-h`` prints the command help:
 .. code-block:: console
 
     usage: rpscripts tcontour [-h] [-fl] [-np] [-o]
-                            [--lowess_degree LOWESS_DEGREE]
+                            [--lowess_degree LOWESS_DEGREE] [-s]
                             filename
 
     positional arguments:
@@ -41,6 +41,7 @@ The option ``-h`` prints the command help:
     -o, --lowess          Plot LOWESS
     --lowess_degree LOWESS_DEGREE
                             Lowess degree
+    -s, --as_step         Step chart
 
 Omit textural complexity chart generation
 -----------------------------------------
@@ -87,3 +88,17 @@ For the labels displaying, use the ``-fl`` option. It adds vertical lines in the
     :alt: labeled-complexity-chart
 
     Textural complexity with form labels indications
+
+Step style
+----------
+
+Use the ``-s`` option to plot textural complexity in step style:
+
+.. code-block:: console
+
+    rpscripts tcontour -s score.json
+
+.. figure:: ../../../examples/schumann-opus48no2-complexity-step.svg
+    :alt: stem-indexogram
+
+    Textural complexity as step chart

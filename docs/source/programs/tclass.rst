@@ -29,7 +29,7 @@ The option ``-h`` prints the command help:
 
 .. code-block:: console
 
-    usage: rpscripts tclass [-h] [-np] [-ng] [-fl] [-c] filename
+    usage: rpscripts tclass [-h] [-np] [-ng] [-fl] [-s] [-c] filename
 
     positional arguments:
     filename              JSON filename (calc's output)
@@ -42,6 +42,7 @@ The option ``-h`` prints the command help:
                             Draw vertical lines to display given form labels. It
                             demands a previous labeled file. Check rpscripts
                             labels -h' column
+    -s, --as_step         Step chart
     -c, --counting_chart  Counting chart
 
 Omit textural classes chart generation
@@ -76,10 +77,25 @@ For the labels displaying, use the ``-fl`` option. It adds vertical lines in the
 
     Textural classes chart with form labels indications
 
+
+Step style
+----------
+
+Use the ``-s`` option to plot textural classes in time in step style:
+
+.. code-block:: console
+
+    rpscripts tclass -s score.json
+
+.. figure:: ../../../examples/schumann-opus48no2-classes-step.svg
+    :alt: stem-classes
+
+    Textural classes chart in step style
+
 Counting chart
 --------------
 
-Use the ``-c`` option to plot a texture classes counting chart.
+Use the ``-c`` option to plot a textural classes counting chart.
 
 .. code-block:: console
 
