@@ -102,15 +102,19 @@ class ExtendedRPData(RPData):
 class TexturalClassPlot(AbstractTimePlotter):
     '''Textural Class Plot class.'''
 
-    def __init__(self, rpdata: RPData, image_format='svg', show_labels=False) -> None:
+    def __init__(self, rpdata: RPData, image_format='svg', show_labels=False, as_step=False) -> None:
         self.name = 'classes'
+        self.as_step = as_step
         super().__init__(rpdata, image_format, show_labels)
 
     def plot(self):
-        # x_values = rpdata.data['Global offset']
-        y_vals = [TEXTURAL_CLASSES.index(x) for x in self.rpdata.tclass]
+        y_values = [TEXTURAL_CLASSES.index(x) for x in self.rpdata.tclass]
 
-        self.axis.plot(self.x_values[:-1], y_vals)
+        # plot or step function
+        fn = self.axis.plot
+        if self.as_step:
+            fn = self.axis.step
+        fn(self.x_values[:-1], y_values)
 
         self.make_xticks()
 
@@ -140,6 +144,7 @@ class Subparser(GeneralSubparser):
         self.parser.add_argument("-np", "--no_plot", help='No texture class chart', default=False, action='store_true')
         self.parser.add_argument("-ng", "--no_graph", help='No graph chart', default=False, action='store_true')
         self.parser.add_argument("-fl", "--show_form_labels", help = "Draw vertical lines to display given form labels. It demands a previous labeled file. Check rpscripts labels -h' column", default=False, action='store_true')
+        self.parser.add_argument("-s", "--as_step", help='Step chart', default=False, action='store_true')
         self.parser.add_argument("-c", "--counting_chart", help = "Counting chart", default=False, action='store_true')
 
     def handle(self, args):
@@ -151,7 +156,7 @@ class Subparser(GeneralSubparser):
             figname = file_rename(args.filename, 'svg', 'classes')
             print('Saving texture classes plot in {}...'.format(figname))
 
-            tclass_plot = TexturalClassPlot(rpdata, 'svg', args.show_form_labels)
+            tclass_plot = TexturalClassPlot(rpdata, 'svg', args.show_form_labels, args.as_step)
             tclass_plot.plot()
             tclass_plot.save()
 

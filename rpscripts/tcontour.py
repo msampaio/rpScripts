@@ -188,11 +188,12 @@ class ExtendedRPData(RPData):
 class ContourPlot(AbstractTimePlotter):
     '''Contour Plot class.'''
 
-    def __init__(self, contour: Contour, rpdata: RPData, image_format='svg', show_labels=False, run_lowess=False, lowess_degree=0.05) -> None:
+    def __init__(self, contour: Contour, rpdata: RPData, image_format='svg', show_labels=False, run_lowess=False, lowess_degree=0.05, as_step=False) -> None:
         self.name = 'complexity'
         self.contour = contour
         self.run_lowess = run_lowess
         self.lowess_degree = lowess_degree
+        self.as_step = as_step
         super().__init__(rpdata, image_format, show_labels)
 
     def plot(self):
@@ -206,7 +207,11 @@ class ContourPlot(AbstractTimePlotter):
         else:
             y_vals = level_seq
 
-        self.axis.plot(self.x_values[:-1], y_vals)
+        # plot or step function
+        fn = self.axis.plot
+        if self.as_step:
+            fn = self.axis.step
+        fn(self.x_values[:-1], y_vals)
 
         if self.run_lowess:
             lowess = statsmodels.nonparametric.smoothers_lowess.lowess(y_vals, self.x_values[:-1], frac=self.lowess_degree)[:, 1]
@@ -242,6 +247,7 @@ class Subparser(GeneralSubparser):
         self.parser.add_argument("-np", "--no_plot", help='No Plot chart', default=False, action='store_true')
         self.parser.add_argument("-o", "--lowess", help='Plot LOWESS', default=False, action='store_true')
         self.parser.add_argument("--lowess_degree", help='Lowess degree', default=0.05, type=float)
+        self.parser.add_argument("-s", "--as_step", help='Step chart', default=False, action='store_true')
 
     def handle(self, args):
         json_filename = args.filename
@@ -266,6 +272,6 @@ class Subparser(GeneralSubparser):
             figname = file_rename(json_filename, 'svg', 'complexity')
             print('Saving texture contour plot in {}...'.format(figname))
 
-            contour_plot = ContourPlot(contour, rpdata, 'svg', args.show_form_labels, args.lowess, lowess_degree=args.lowess_degree)
+            contour_plot = ContourPlot(contour, rpdata, 'svg', args.show_form_labels, args.lowess, lowess_degree=args.lowess_degree, as_step=args.as_step)
             contour_plot.plot()
             contour_plot.save()
