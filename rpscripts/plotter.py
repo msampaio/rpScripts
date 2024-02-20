@@ -771,8 +771,8 @@ class SimplePartDensityNumberInTimePlotter(AbstractTimePlotter):
 
     def plot(self):
         # plt.clf()
-        self.axis.step(self.x_values, self.y_number_of_parts)
-        self.axis.step(self.x_values, self.y_density_numbers)
+        self.axis.step(self.x_values, self.y_number_of_parts, where='post')
+        self.axis.step(self.x_values, self.y_density_numbers, where='post')
 
         self.make_xticks()
 

@@ -111,10 +111,10 @@ class TexturalClassPlot(AbstractTimePlotter):
         y_values = [TEXTURAL_CLASSES.index(x) for x in self.rpdata.tclass]
 
         # plot or step function
-        fn = self.axis.plot
         if self.as_step:
-            fn = self.axis.step
-        fn(self.x_values[:-1], y_values)
+            self.axis.step(self.x_values[:-1], y_values, where='post')
+        else:
+            self.axis.plot(self.x_values[:-1], y_values)
 
         self.make_xticks()
 

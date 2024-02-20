@@ -201,20 +201,19 @@ class ContourPlot(AbstractTimePlotter):
         sublevel_seq = self.contour.sublevels_seq
         sublevel_max = self.contour.sublevels_max
 
-        # x_values = list(map(parse_fraction, contour.locations))
         if sublevel_max > 0:
-            y_vals = [(level + sublevel) / (sublevel_max * 2) for level, sublevel in zip(level_seq, sublevel_seq)]
+            y_values = [(level + sublevel) / (sublevel_max * 2) for level, sublevel in zip(level_seq, sublevel_seq)]
         else:
-            y_vals = level_seq
+            y_values = level_seq
 
         # plot or step function
-        fn = self.axis.plot
         if self.as_step:
-            fn = self.axis.step
-        fn(self.x_values[:-1], y_vals)
+            self.axis.step(self.x_values[:-1], y_values, where='post')
+        else:
+            self.axis.plot(self.x_values[:-1], y_values)
 
         if self.run_lowess:
-            lowess = statsmodels.nonparametric.smoothers_lowess.lowess(y_vals, self.x_values[:-1], frac=self.lowess_degree)[:, 1]
+            lowess = statsmodels.nonparametric.smoothers_lowess.lowess(y_values, self.x_values[:-1], frac=self.lowess_degree)[:, 1]
             self.axis.plot(self.x_values[:-1], lowess)
             self.axis.legend(['Contour', 'Lowess {}'.format(self.lowess_degree)])
 

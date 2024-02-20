@@ -7,12 +7,14 @@ Next release
 Bugs fixed
 ~~~~~~~~~~
 
-- Fix tuplet duration calculus
+- Fix tuplet duration calculus.
+- Fix step chart generation.
 
 Improvements
 ~~~~~~~~~~~~
 
 - Improve old JSON file processing.
+- Minor code improvement.
 
 Release 2.2 (released Feb 15, 2024)
 -----------------------------------

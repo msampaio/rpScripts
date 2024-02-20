@@ -4,11 +4,13 @@
 
 ### Bug fixes
 
-- Fix tuplet duration calculus
+- Fix tuplet duration calculus.
+- Fix step chart generation.
 
 ### Improvements
 
 - Improve old JSON file processing.
+- Minor code improvement.
 
 ## 2.2
 
