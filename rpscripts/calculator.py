@@ -98,16 +98,6 @@ def make_music_events_from_part(m21_part: music21.stream.Part) -> dict:
     return aux_join_music_events(events)
 
 
-def auxiliary_get_duration(m21_obj) -> Fraction:
-    '''Return the duration of the given Music21 object as a Fraction object.'''
-
-    if m21_obj.duration.tuplets:
-        dur = m21_obj.duration.quarterLength
-    else:
-        dur = make_fraction(m21_obj.duration.quarterLength)
-    return dur
-
-
 def split_part_chords(m21_part: music21.stream.Part) -> music21.stream.Part:
     '''Return a new Music21 Part object with pitches extracted from chords of a given Music21 Part object.
 
@@ -278,7 +268,7 @@ class MusicalEvent(object):
         self.measure_number = measure_number
         self.offset = offset
         self.global_offset = self.offset + make_fraction(measure_offset)
-        self.duration = auxiliary_get_duration(m21_obj)
+        self.duration = make_fraction(m21_obj.duration.quarterLength)
         self.m21_class = m21_obj.__class__
 
         if self.is_rest():
