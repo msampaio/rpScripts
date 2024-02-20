@@ -1,5 +1,11 @@
 # Releases
 
+## Next release
+
+### Improvements
+
+- Improve old JSON file processing.
+
 ## 2.2
 
 ### Features added

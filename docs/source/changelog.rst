@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Next release
+------------
+
+Improvements
+~~~~~~~~~~~~
+
+- Improve old JSON file processing.
+
 Release 2.2 (released Feb 15, 2024)
 -----------------------------------
 

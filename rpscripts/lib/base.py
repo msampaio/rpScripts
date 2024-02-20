@@ -480,11 +480,12 @@ class RPData(object):
         self.offset_map = {k: parse_fraction(v) for k, v in data['offset_map'].items()}
         self.values_map = data['values_map']
 
-        try:
-            for attr in self.attributes_list:
-                self.__setattr__(attr, data[attr])
-        except:
-            raise CustomException('There is at least one missing attribute in the given JSON file. Please, regenerate it running `rpscripts calc` on its respective digital score file.')
+        for attr in self.attributes_list:
+            if attr in data.keys():
+                _data = data[attr]
+            else:
+                _data = []
+            self.__setattr__(attr, _data)
 
         self.labels = data['labels']
         self.size = len(self.partitions)
