@@ -102,10 +102,7 @@ def auxiliary_get_duration(m21_obj) -> Fraction:
     '''Return the duration of the given Music21 object as a Fraction object.'''
 
     if m21_obj.duration.tuplets:
-        tup = m21_obj.duration.tuplets[0]
-        num = tup.numberNotesNormal
-        den = tup.numberNotesActual
-        dur = Fraction(num, den) / 2
+        dur = m21_obj.duration.quarterLength
     else:
         dur = make_fraction(m21_obj.duration.quarterLength)
     return dur

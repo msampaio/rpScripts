@@ -2,6 +2,10 @@
 
 ## Next release
 
+### Bug fixes
+
+- Fix tuplet duration calculus
+
 ### Improvements
 
 - Improve old JSON file processing.

@@ -4,6 +4,11 @@ Changelog
 Next release
 ------------
 
+Bugs fixed
+~~~~~~~~~~
+
+- Fix tuplet duration calculus
+
 Improvements
 ~~~~~~~~~~~~
 
