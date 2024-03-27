@@ -2,6 +2,7 @@
 
 import copy
 import multiprocessing
+import os
 import music21
 
 from fractions import Fraction
@@ -197,7 +198,7 @@ def split_score(filename: str) -> music21.stream.Score:
     try:
         sco = music21.converter.parse(filename, quantizePost=False)
     except:
-        raise CustomException('Error on given score parsing.')
+        raise CustomException('Error on given score parsing {}.'.format(filename))
 
     new_sco = music21.stream.Score()
 

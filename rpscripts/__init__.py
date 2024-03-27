@@ -17,3 +17,4 @@ from . import stats
 from . import trimmer
 
 from . import tclass
+from . import tcontour
