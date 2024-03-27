@@ -25,14 +25,6 @@ Its basic usage is:
 
     rpscripts calc score.xml
 
-The ``-c`` option also creates a CSV file with the events data (see :doc:`converter` section).
-
-The combined ``-e`` and ``-c`` options create a CSV file with equally-sized events. This procedure is helpful for statistical operations such as frequency analysis.
-
-.. code-block:: console
-
-    rpscripts calc -e score.xml
-
 The option ``-h`` prints the program help:
 
 .. code-block:: console
@@ -43,12 +35,35 @@ Output:
 
 .. code-block:: console
 
-    usage: rpscripts calc [-h] [-c] [-e] filename
+    usage: rpscripts calc [-h] [-d] [-m] [-c] [-e] filename
 
     positional arguments:
-    filename             digital score filename (XML, MXL, MIDI and KRN)
+    filename              digital score filename (XML, MXL, MIDI and KRN)
 
     options:
-    -h, --help           show this help message and exit
-    -c, --csv            output data in a CSV file.
-    -e, --equally_sized  generate equally-sized events
+    -h, --help            show this help message and exit
+    -d, --dir             folder with digital score files
+    -m, --multiprocessing
+                            multiprocessing
+    -c, --csv             output data in a CSV file.
+    -e, --equally_sized   generate equally-sized events
+
+The ``-c`` option also creates a CSV file with the events data (see :doc:`converter` section).
+
+The combined ``-e`` and ``-c`` options create a CSV file with equally-sized events. This procedure is helpful for statistical operations such as frequency analysis.
+
+.. code-block:: console
+
+    rpscripts calc -e score.xml
+
+The ``-d`` option runs the program in all available digital scores available in the given directory (XML, MXL, KRN, MIDI, and MID):
+
+.. code-block:: console
+
+    rpscripts calc -d path-to-folder
+
+The ``-m`` option runs the program using multiple processor cores when available. This option runs in combination with ``-d``:
+
+.. code-block:: console
+
+    rpscripts calc -m -d path-to-folder
