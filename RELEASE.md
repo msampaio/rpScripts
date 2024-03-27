@@ -2,6 +2,11 @@
 
 ## Next release
 
+### Features added
+
+- Directory processing.
+- Multiprocessing.
+
 ### Bug fixes
 
 - Fix tuplet duration calculus.

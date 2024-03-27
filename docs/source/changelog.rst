@@ -4,6 +4,12 @@ Changelog
 Next release
 ------------
 
+Features added
+~~~~~~~~~~~~~~
+
+- Directory processing.
+- Multiprocessing.
+
 Bugs fixed
 ~~~~~~~~~~
 
