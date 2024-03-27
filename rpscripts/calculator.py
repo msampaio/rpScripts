@@ -1,6 +1,7 @@
 '''This module provides classes and functions to calculate the rhythmic partitions from a given digital score.'''
 
 import copy
+import multiprocessing
 import music21
 
 from fractions import Fraction
@@ -8,6 +9,15 @@ from tqdm import tqdm
 
 from .lib.partition import Partition
 from .lib.base import CustomException, EventLocation, GeneralSubparser, RPData, file_rename, find_nearest_smaller, make_fraction
+
+
+SCORE_FILETYPES = [
+    'xml',
+    'mxl',
+    'krn',
+    'midi',
+    'mid',
+]
 
 
 def aux_make_events_from_part(m21_part: music21.stream.Part) -> dict:
@@ -604,6 +614,19 @@ class ParsemaeSegment(object):
         return rpdata
 
 
+def main(filename, csv, equally_sized):
+    sco = split_score(filename)
+    segment = ParsemaeSegment()
+    segment.make_from_music21_score(sco)
+
+
+    rpdata = segment.make_rpdata(filename)
+    rpdata.save_to_file()
+
+    if csv:
+        rpdata.save_to_csv(equally_sized)
+
+
 class Subparser(GeneralSubparser):
     '''Implements argparser.'''
 
@@ -614,18 +637,36 @@ class Subparser(GeneralSubparser):
 
     def add_arguments(self) -> None:
         self.parser.add_argument('filename', help='digital score filename (XML, MXL, MIDI and KRN)', type=str)
+        self.parser.add_argument('-d', '--dir', help='folder with digital score files', default=False, action='store_true')
+        self.parser.add_argument('-m', '--multiprocessing', help='multiprocessing', default=False, action='store_true')
         self.parser.add_argument('-c', '--csv', help='output data in a CSV file.', default=False, action='store_true')
         self.parser.add_argument('-e', '--equally_sized', help='generate equally-sized events', default=False, action='store_true')
 
     def handle(self, args):
         print('Running script on {} file...'.format(args.filename))
 
-        sco = split_score(args.filename)
-        segment = ParsemaeSegment()
-        segment.make_from_music21_score(sco)
+        if args.dir:
+            filetypes = SCORE_FILETYPES[:]
+            filetypes.extend([f.upper() for f in SCORE_FILETYPES])
+            filetypes.extend([f.lower() for f in SCORE_FILETYPES])
+            filetypes = list(set(filetypes))
 
-        rpdata = segment.make_rpdata(args.filename)
-        rpdata.save_to_file()
+            if not os.path.isdir(args.filename):
+                raise CustomException('The given filename is not of directory type.')
+            else:
+                files = [
+                    f for f in map(lambda x: os.path.join(args.filename, x), sorted(os.listdir(args.filename)))
+                    if os.path.isfile(f) and f.split('.')[-1] in filetypes
+                ]
 
-        if args.csv:
-            rpdata.save_to_csv(args.equally_sized)
+                total_cpus = multiprocessing.cpu_count()
+
+                if args.multiprocessing and total_cpus > 3:
+                    with multiprocessing.Pool(total_cpus - 2) as p:
+                        out = p.starmap(main, [(f, args.csv, args.equally_sized) for f in files])
+                else:
+                    for f in files:
+                        main(f, args.csv, args.equally_sized)
+
+        else:
+            main(args.filename, args.csv, args.equally_sized)
