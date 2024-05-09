@@ -355,9 +355,7 @@ class AbstractIndexogramPlotter(AbstractTimePlotter):
 
 class AbstractRadarPlotter(AbstractPlotter):
     def __init__(self, rpdata: RPData, image_format='svg') -> None:
-        self.name = 'radar'
         super().__init__(rpdata, image_format)
-        self.name = 'radar'
         self.data = []
 
     def plot(self) -> None:
