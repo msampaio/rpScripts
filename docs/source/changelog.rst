@@ -9,6 +9,7 @@ Features added
 
 - Directory processing.
 - Multiprocessing.
+- New new radar chart for textural classes.
 
 Bugs fixed
 ~~~~~~~~~~

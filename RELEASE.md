@@ -6,6 +6,7 @@
 
 - Directory processing.
 - Multiprocessing.
+- New new radar chart for textural classes.
 
 ### Bug fixes
 
