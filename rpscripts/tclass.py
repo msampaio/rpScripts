@@ -9,7 +9,7 @@ from collections import Counter
 import itertools
 import matplotlib.pyplot as plt
 
-from rpscripts.plotter import AbstractTimePlotter
+from rpscripts.plotter import AbstractRadarPlotter, AbstractTimePlotter
 
 from .lib.base import GeneralSubparser, RPData, file_rename
 from .lib.partition import Partition
@@ -133,6 +133,41 @@ class TexturalClassPlot(AbstractTimePlotter):
         return super().plot()
 
 
+class TexturalClassRadarPlotter(AbstractRadarPlotter):
+    def __init__(self, rpdata: RPData, image_format='svg') -> None:
+        self.name = 'classes-radar'
+        super().__init__(rpdata, image_format)
+        self.name = 'classes-radar'
+
+        # Make data
+        if self.rpdata.labels:
+            dic = {label: [0] * len(TEXTURAL_CLASSES) for label in set(self.rpdata.labels)}
+
+            ordered_labels = []
+
+            for tclass, label in zip(self.rpdata.tclass, self.rpdata.labels):
+                ind = TEXTURAL_CLASSES.index(tclass)
+                dic[label][ind] += 1
+                if label not in ordered_labels:
+                    ordered_labels.append(label)
+        else:
+            label = 'All sections'
+            dic = {label: [0] * len(TEXTURAL_CLASSES)}
+
+            ordered_labels = [label]
+
+            for tclass in self.rpdata.tclass:
+                ind = TEXTURAL_CLASSES.index(tclass)
+                dic[label][ind] += 1
+
+        # order dic itemss
+        _items = []
+        for label in ordered_labels:
+            _items.append((label, dic[label]))
+        self.data = [(k, [el / sum(v) for el in v]) for k, v in _items]
+        self.data.insert(0, TEXTURAL_CLASSES)
+
+
 class Subparser(GeneralSubparser):
     '''Implements argparser.'''
 
@@ -146,6 +181,7 @@ class Subparser(GeneralSubparser):
         self.parser.add_argument("-fl", "--show_form_labels", help = "Draw vertical lines to display given form labels. It demands a previous labeled file. Check rpscripts labels -h' column", default=False, action='store_true')
         self.parser.add_argument("-s", "--as_step", help='Step chart', default=False, action='store_true')
         self.parser.add_argument("-c", "--counting_chart", help = "Counting chart", default=False, action='store_true')
+        self.parser.add_argument("-r", "--radar_chart", help = "Radar chart", default=False, action='store_true')
 
     def handle(self, args):
         rpdata = ExtendedRPData(args.filename)
@@ -178,3 +214,8 @@ class Subparser(GeneralSubparser):
             figname = file_rename(args.filename, 'svg', 'classes-counter')
             print('Saving textural classes counting chart in {}...'.format(figname))
             rpdata.make_counting_chart(figname)
+
+        if args.radar_chart:
+            radar_plot = TexturalClassRadarPlotter(rpdata)
+            radar_plot.plot()
+            radar_plot.save()

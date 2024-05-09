@@ -352,6 +352,43 @@ class AbstractIndexogramPlotter(AbstractTimePlotter):
 
         return x_values, global_offsets, y_disp, y_aggl
 
+
+class AbstractRadarPlotter(AbstractPlotter):
+    def __init__(self, rpdata: RPData, image_format='svg') -> None:
+        self.name = 'radar'
+        super().__init__(rpdata, image_format)
+        self.name = 'radar'
+        self.data = []
+
+    def plot(self) -> None:
+        values = self.data[:]
+
+        labels = values.pop(0)
+        num_vars = len(labels)
+        angles = numpy.linspace(0, 2 * numpy.pi, num_vars, endpoint=False).tolist()
+        angles += angles[:1]
+
+        self.figure, self.axis = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+
+        self.axis.set_theta_offset(numpy.pi / 2)
+        self.axis.set_theta_direction(-1)
+
+        colors = ['b', 'r', 'g', 'm', 'y']
+        scolor = len(colors)
+        for i, (label, values) in enumerate(values):
+            self.axis.set_thetagrids(numpy.degrees(angles[:-1]), labels)
+            values += values[:1]
+
+            color = colors[i % scolor]
+            self.axis.plot(angles, values, color=color, linewidth=1, label=label)
+            # Fill it in.
+            self.axis.fill(angles, values, color=color, alpha=0.25)
+
+        self.axis.legend(loc='upper right', bbox_to_anchor=(1.3, 1.1))
+
+        return super().plot()
+
+
 class SimplePartitiogramPlotter(AbstractPartitiogramPlotter):
     def __init__(self, rpdata: RPData, image_format='svg', with_labels=True,  **kwargs) -> None:
         self.name = 'simple-partitiogram'
