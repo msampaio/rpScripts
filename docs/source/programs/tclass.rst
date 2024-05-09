@@ -31,7 +31,7 @@ The option ``-h`` prints the command help:
 
 .. code-block:: console
 
-    usage: rpscripts tclass [-h] [-np] [-ng] [-fl] [-s] [-c] filename
+    usage: rpscripts tclass [-h] [-np] [-ng] [-fl] [-s] [-c] [-r] filename
 
     positional arguments:
     filename              JSON filename (calc's output)
@@ -41,11 +41,10 @@ The option ``-h`` prints the command help:
     -np, --no_plot        No textural class chart
     -ng, --no_graph       No graph chart
     -fl, --show_form_labels
-                            Draw vertical lines to display given form labels. It
-                            demands a previous labeled file. Check rpscripts
-                            labels -h' column
+                            Draw vertical lines to display given form labels. It demands a previous labeled file. Check rpscripts labels -h' column
     -s, --as_step         Step chart
     -c, --counting_chart  Counting chart
+    -r, --radar_chart     Radar chart
 
 Omit textural classes chart generation
 --------------------------------------
@@ -106,3 +105,17 @@ Use the ``-c`` option to plot a textural classes counting chart.
     :alt: textural-classes-counting-chart
 
     Textural classes counting chart
+
+Radar chart
+-----------
+
+Use the ``-r`` option to plot a radar chart.
+
+.. code-block:: console
+
+    rpscripts tclass -r score.json
+
+.. figure:: ../../../examples/schumann-opus48no2-classes-radar.svg
+    :alt: textural-classes-radar
+
+    Textural classes radar chart
