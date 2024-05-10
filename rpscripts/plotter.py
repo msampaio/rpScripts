@@ -369,7 +369,7 @@ class AbstractRadarPlotter(AbstractPlotter):
         self.figure, self.axis = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
 
         self.axis.set_theta_offset(numpy.pi / 2)
-        self.axis.set_theta_direction(-1)
+        self.axis.set_theta_direction(1)
 
         colors = ['b', 'r', 'g', 'm', 'y']
         scolor = len(colors)
