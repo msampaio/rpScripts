@@ -22,6 +22,7 @@ Improvements
 
 - Improve old JSON file processing.
 - Minor code improvement.
+- Add missing bibliography.
 
 Release 2.2 (released Feb 15, 2024)
 -----------------------------------

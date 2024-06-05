@@ -17,6 +17,7 @@
 
 - Improve old JSON file processing.
 - Minor code improvement.
+- Add missing bibliography.
 
 ## 2.2
 

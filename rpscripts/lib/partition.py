@@ -1,6 +1,8 @@
 '''This module provides classes and functions for rhythmic partitioning analysis. For further information, see Gentil-Nunes 2009.
 
 Gentil-Nunes, Pauxy. 2009. "Análise Particional: uma Mediação entre Composição Musical e a Teoria das Partições." Ph.D. Dissertation, Universidade Federal do Estado do Rio de Janeiro.
+
+Gentil-Nunes, Pauxy. 2017. "Nestings and Intersections Between Partitional Complexes." MusMat - Brazilian Journal of Music and Mathematics I (2): 93--108. Available at https://musmat.org/wp-content/uploads/2018/06/09-Pauxy.pdf.
 '''
 
 from collections import Counter
@@ -153,7 +155,7 @@ class Partition(object):
         # resizing implies the inclusion of more sounding components to a
         # block, making it "fatter"; the negative resizing is, on the contrary,
         # the thickening of a part, subtracting a sounding component from a
-        # block.
+        # block. (Gentil-Nunes, 2017)
 
         resized = []
 
@@ -171,7 +173,7 @@ class Partition(object):
         # Revariance (v) is the changing of variety (number of parts) inside a
         # textural configuration. Positive revariance implies adding an unitary
         # part to the partition and negative revariance means subtracting an
-        # unitary part from it.
+        # unitary part from it. (Gentil-Nunes, 2017)
 
         return Partition(self.parts + [1])
 
@@ -183,7 +185,7 @@ class Partition(object):
         # revariance, and vice-versa). The consequence is that one sounding
         # component is displaced from a part to another, without affecting the
         # overall density- number. This kind of operation is very common in
-        # traditional concert music.
+        # traditional concert music. (Gentil-Nunes, 2017)
 
         def swap(part_1, part_2):
             _parts = deepcopy(self.parts)
