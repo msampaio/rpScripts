@@ -18,3 +18,4 @@ RP Scripts comprises several programs to calculate, plot, annotate, label, and t
    tcontour
    tclass
    trimmer
+   finder

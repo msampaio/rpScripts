@@ -13,6 +13,7 @@ from . import plotter
 from . import stats
 from . import trimmer
 from . import utils
+from . import finder
 
 from . import tclass
 from . import tcontour
@@ -31,6 +32,7 @@ def main() -> None:
         stats.Subparser,
         converter.Subparser,
         trimmer.Subparser,
+        finder.Subparser
     ]
 
     # Add new custom arg parsers here

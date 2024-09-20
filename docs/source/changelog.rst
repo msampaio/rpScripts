@@ -9,7 +9,8 @@ Features added
 
 - Directory processing.
 - Multiprocessing.
-- New new radar chart for textural classes.
+- New radar chart for textural classes.
+- New finder tool.
 
 Bugs fixed
 ~~~~~~~~~~
@@ -23,6 +24,7 @@ Improvements
 - Improve old JSON file processing.
 - Minor code improvement.
 - Add missing bibliography.
+- Add missing Tcontour data in Schumann's example.
 
 Release 2.2 (released Feb 15, 2024)
 -----------------------------------

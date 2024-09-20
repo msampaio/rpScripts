@@ -1,5 +1,5 @@
-Modules
-=======
+rpscripts
+=========
 
 .. toctree::
    :maxdepth: 4

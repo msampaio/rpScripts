@@ -6,7 +6,8 @@
 
 - Directory processing.
 - Multiprocessing.
-- New new radar chart for textural classes.
+- New radar chart for textural classes.
+- New finder tool.
 
 ### Bug fixes
 
@@ -18,6 +19,7 @@
 - Improve old JSON file processing.
 - Minor code improvement.
 - Add missing bibliography.
+- Add missing Tcontour data in Schumann's example.
 
 ## 2.2
 

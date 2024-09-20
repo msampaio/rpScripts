@@ -52,6 +52,14 @@ rpscripts.converter module
    :undoc-members:
    :show-inheritance:
 
+rpscripts.finder module
+-----------------------
+
+.. automodule:: rpscripts.finder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 rpscripts.info module
 ---------------------
 
