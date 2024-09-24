@@ -166,7 +166,7 @@ class Contour(object):
         self.complexity_data = []
         for level, sublevel in zip(self.levels_seq, self.sublevels_seq):
             contour_repr = str(level)
-            if int(sublevel) == 0:
+            if int(sublevel) != 0:
                 contour_repr = '{}-{}'.format(level, sublevel)
             self.level_sublevel_seq.append(contour_repr)
             self.complexity_data.append([
@@ -202,7 +202,7 @@ class ContourPlot(AbstractTimePlotter):
         sublevel_max = self.contour.sublevels_max
 
         if sublevel_max > 0:
-            y_values = [(level + sublevel) / (sublevel_max * 2) for level, sublevel in zip(level_seq, sublevel_seq)]
+            y_values = [level + sublevel / (sublevel_max * 2) for level, sublevel in zip(level_seq, sublevel_seq)]
         else:
             y_values = level_seq
 
