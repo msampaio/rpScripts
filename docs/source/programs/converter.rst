@@ -3,6 +3,12 @@ Converter
 
 The converter command saves a given JSON data into a CSV file.
 
+The basic command line is:
+
+.. code-block:: console
+
+    rpscripts convert score.json
+
 Option ``-h`` returns program's help:
 
 .. code-block:: console

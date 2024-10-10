@@ -22,6 +22,7 @@
 - Minor code improvement.
 - Add missing bibliography.
 - Add missing Tcontour data in Schumann's example.
+- Add missing information for Converter documentation.
 
 ## 2.2
 
