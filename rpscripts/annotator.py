@@ -19,7 +19,7 @@ def main(m21_score: music21.stream.Score, rpdata: RPData, outfilename: str, labe
     new_score = deepcopy(m21_score)
 
     p0 = new_score.parts[0]
-    new_part = music21.stream.Stream()
+    new_part = music21.stream.Part()
     new_part.insert(0, music21.clef.PercussionClef())
 
     measures = {}

@@ -18,6 +18,7 @@ Bugs fixed
 - Fix textural contour calculus and plotting.
 - Fix tuplet duration calculus.
 - Fix step chart generation.
+- Fix annotated file generation.
 
 Improvements
 ~~~~~~~~~~~~
