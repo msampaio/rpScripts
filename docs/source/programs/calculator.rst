@@ -38,7 +38,7 @@ Output:
     usage: rpscripts calc [-h] [-d] [-m] [-c] [-e] filename
 
     positional arguments:
-    filename              digital score filename (XML, MXL, MIDI and KRN)
+    filename              digital score filename (XML, MXL, and KRN)
 
     options:
     -h, --help            show this help message and exit
@@ -56,7 +56,7 @@ The combined ``-e`` and ``-c`` options create a CSV file with equally-sized even
 
     rpscripts calc -e score.xml
 
-The ``-d`` option runs the program in all available digital scores available in the given directory (XML, MXL, KRN, MIDI, and MID):
+The ``-d`` option runs the program in all available digital scores available in the given directory (XML, MXL, and KRN):
 
 .. code-block:: console
 

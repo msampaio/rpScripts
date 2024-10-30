@@ -28,7 +28,7 @@ Option ``-h`` returns the program's help:
     options:
     -h, --help            show this help message and exit
     -s SCORE_FILENAME, --score_filename SCORE_FILENAME
-                            digital score filename (XML, MXL, MIDI and KRN)
+                            digital score filename (XML, MXL, and KRN)
     -t TYPE, --type TYPE  type of annotation (partitions, tclass, tcontour)
 
 Types

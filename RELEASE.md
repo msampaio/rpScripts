@@ -15,6 +15,7 @@
 - Fix tuplet duration calculus.
 - Fix step chart generation.
 - Fix annotated file generation.
+- Remove MIDI parser.
 
 ### Improvements
 
