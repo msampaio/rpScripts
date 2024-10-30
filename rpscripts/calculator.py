@@ -9,7 +9,7 @@ from fractions import Fraction
 from tqdm import tqdm
 
 from .lib.partition import Partition
-from .lib.base import CustomException, EventLocation, GeneralSubparser, RPData, file_rename, find_nearest_smaller, make_fraction
+from .lib.base import CustomException, EventLocation, GeneralSubparser, RPData, file_rename, find_nearest_smaller, is_midi_file, make_fraction
 
 
 SCORE_FILETYPES = [
@@ -27,6 +27,7 @@ def aux_make_events_from_part(m21_part: music21.stream.Part) -> dict:
     '''
 
     measures = m21_part.getElementsByClass(music21.stream.Measure)
+    del m21_part
 
     events = {}
 
@@ -106,6 +107,7 @@ def make_music_events_from_part(m21_part: music21.stream.Part) -> dict:
     '''
 
     events = aux_make_events_from_part(m21_part)
+    del m21_part
     return aux_join_music_events(events)
 
 
@@ -195,6 +197,10 @@ def split_score(filename: str) -> music21.stream.Score:
     '''Parse a given digital score file, split chords, convert voices to parts and returns a new Music21 Score object.'''
 
     parts = []
+
+    if is_midi_file(filename):
+        raise CustomException('Invalid file format. Convert the given MIDI file to MusicXML. Use MuseScore or other converter.')
+
     try:
         sco = music21.converter.parse(filename, quantizePost=False)
     except:
@@ -232,7 +238,8 @@ def make_offset_map(m21part: music21.stream.Part) -> dict:
     if 0 in aux_offset_map.values():
         measure_number = 0
     else:
-        measure_number = 1
+        # measure_number = 1
+        measure_number = min(aux_offset_map.values())
 
     for global_offset in aux_offset_map.keys():
         new_offset_map[measure_number] = global_offset
@@ -399,6 +406,7 @@ class PartSoundingMap(object):
         Create `MusicEvent` objects for each event and then, create `SingleEvent` objects to add to `single_events` attribute.'''
 
         music_events = make_music_events_from_part(m21_part)
+        del m21_part
         self.single_events = {}
         for global_offset, m_event in music_events.items():
             # interval: closed start and open end.
@@ -463,6 +471,7 @@ class ScoreSoundingMap(object):
 
         psm = PartSoundingMap()
         psm.set_from_m21_part(m21_part)
+        del m21_part
         if psm.single_events:
             self.sounding_maps.append(psm)
             self.attacks.extend(psm.attack_global_offsets)
@@ -553,8 +562,10 @@ class ParsemaeSegment(object):
 
         ssm = ScoreSoundingMap()
         ssm.add_score_sounding_maps(m21_score)
+        del m21_score
         self.parsemae = ssm.make_parsemae()
         self._measure_offsets = ssm.measure_offsets
+        del ssm
 
     def get_data(self) -> tuple:
         '''Get partitions, agglomeration, and dispersion data and their locations.'''
@@ -620,9 +631,12 @@ def main(filename, csv, equally_sized):
     segment = ParsemaeSegment()
     segment.make_from_music21_score(sco)
 
+    del sco
 
     rpdata = segment.make_rpdata(filename)
     rpdata.save_to_file()
+
+    del segment
 
     if csv:
         rpdata.save_to_csv(equally_sized)
@@ -637,7 +651,7 @@ class Subparser(GeneralSubparser):
         self.add_parent = False
 
     def add_arguments(self) -> None:
-        self.parser.add_argument('filename', help='digital score filename (XML, MXL, MIDI and KRN)', type=str)
+        self.parser.add_argument('filename', help='digital score filename (XML, MXL, and KRN)', type=str)
         self.parser.add_argument('-d', '--dir', help='folder with digital score files', default=False, action='store_true')
         self.parser.add_argument('-m', '--multiprocessing', help='multiprocessing', default=False, action='store_true')
         self.parser.add_argument('-c', '--csv', help='output data in a CSV file.', default=False, action='store_true')

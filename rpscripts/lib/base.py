@@ -107,6 +107,16 @@ def clean_filename(filename: str) -> str:
     return filename
 
 
+def is_midi_file(filepath) -> bool:
+    '''Return True if the given filepath is a MIDI file.'''
+
+    if os.path.isfile(filepath):
+        with open(filepath, 'rb') as fp:
+            data = fp.read()[:4]
+        return data == b'MThd'
+    return False
+
+
 def save_dict_into_csv_file(dic: dict, filename: str) -> None:
     '''Save a given dictionary into a CSV file.'''
 
