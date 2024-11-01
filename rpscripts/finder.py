@@ -3,7 +3,7 @@
 import pandas
 
 from .config import ENCODING
-from .lib.base import GeneralSubparser, RPData, file_rename
+from .lib.base import CustomException, GeneralSubparser, RPData, file_rename
 
 MAX_TO_PRINT = 30
 
@@ -11,6 +11,12 @@ def main(json_filename: str, field_name: str, value: str) -> None:
     '''Add the given TXT file labels into the given JSON file.'''
 
     rpdata = RPData(json_filename)
+
+    ## Check if tclass or tcontour data is available in given json file
+    if field_name == 'tclass' and not rpdata.tclass:
+        raise CustomException('The given JSON file has no TCLASS data. Run TCLASS program on JSON file and try again.')
+    if field_name == 'tcontour' and not rpdata.tcontour:
+        raise CustomException('The given JSON file has no TCONTOUR data. Run TCONTOUR program on JSON file and try again.')
 
     ## Check if field is inside rpdata.data.
     if field_name in rpdata.data.keys():
