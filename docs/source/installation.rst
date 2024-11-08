@@ -3,54 +3,20 @@ Installation
 
 RP Scripts is a `Python-3 <https://www.python.org/>`_-based program. Python 3 non-users have to download and install it before running the following instructions (check `<https://www.python.org/downloads/>`_).
 
-There are multiple ways to install RP Scripts. All of them require dependencies installation:
+The RP Scripts install is partially manual.
+
+1. Install RP Scripts. `PIPX <https://pipx.pypa.io/latest/>` is recommended.
+
+   pipx install https://github.com/msampaio/rpScripts.git
+
+2. Create a ``rps_aux`` folder in your root (``~/rps_aux`` on Linux and Mac, or ``C:\Users\Username\rps_aux`` on Windows).
+
+3. Download the file https://raw.githubusercontent.com/msampaio/rpScripts/refs/heads/main/lattice_map.json in your ``rps_aux`` folder.
+
+4. If you plan to use the Textural class tool, install `Graphviz <https://www.graphviz.org/>`_.
+
+The next step is to test the program. Open a terminal (or CMD on Windows) and run:
 
 .. code-block:: console
 
-   pip install -r requirements.txt
-
-
-The graphs generation depends on the `Graphviz <https://www.graphviz.org/>`_  installation.
-
-Binary creation
----------------
-
-The easiest way to use it is by creating a binary file (for instance, a ``.exe`` in Windows).
-
-1. Build the binary:
-
-.. code-block:: console
-
-   pyinstaller rps_compile.spec
-
-This command generates ``build`` and ``dist`` folders and saves the binary file into the ``dist`` folder.
-
-2. Move the binary file to a folder in the user system's ``PATH``.
-
-3. We encourage the user to create a personal scripts folder and put it in the system's ``PATH`` environment variable.
-
-4. Jump to :ref:`finishing_installation` instructions.
-
-As a PIP package
-----------------
-
-To use rpscripts like a ``PIP`` package, run:
-
-.. code-block:: console
-
-   python -m build
-
-Then, locate the ``.whl`` file inside the ``dist`` folder and run:
-
-.. code-block:: console
-
-   pip install -U dist/rpscripts-[version]-py3-none-any.whl
-
-Linux and Mac users must rename the ``rps_bin.py`` file to ``rpscripts`` and move it to a binary folder listed at ``PATH``, such as ``~/.local/bin`` (Linux) or ``/usr/local/bin`` (Mac).
-
-.. _finishing_installation:
-
-Finishing installation
-----------------------
-
-Finally, create a ``~/rps_aux`` folder and copy the provided ``lattice_map.json`` there.
+   rpscripts -h
