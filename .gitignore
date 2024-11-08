@@ -1,5 +1,3 @@
 *.ipynb
 *.pyc
 debugging
-dist
-build

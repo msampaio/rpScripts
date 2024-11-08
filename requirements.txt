@@ -1,3 +1,4 @@
+poetry
 build
 graphviz
 matplotlib
