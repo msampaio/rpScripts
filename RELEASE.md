@@ -24,6 +24,7 @@
 - Add missing bibliography.
 - Add missing Tcontour data in Schumann's example.
 - Add missing information for Converter documentation.
+- Installation process.
 
 ## 2.2
 
