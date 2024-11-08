@@ -5,7 +5,7 @@ RP Scripts is a `Python-3 <https://www.python.org/>`_-based program. Python 3 no
 
 The RP Scripts install is partially manual.
 
-1. Install RP Scripts. `PIPX <https://pipx.pypa.io/latest/>` is recommended.
+1. Install RP Scripts. `PIPX <https://pipx.pypa.io/latest/>`_ is recommended.
 
    pipx install https://github.com/msampaio/rpScripts.git
 
