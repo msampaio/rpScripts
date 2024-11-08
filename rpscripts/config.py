@@ -28,4 +28,4 @@ if not os.path.exists(LATTICE_MAP_PATH):
     shutil.copy(os.path.join(orig_dir, lattice_map_filename), AUX_DIR)
 
 # Remove date and time for stable versions
-VERSION = '2.2-2024-11-08T21:42Z'
+VERSION = 'dev-2024-11-08T23:44Z'
