@@ -16,6 +16,7 @@ Debian-based distros users need to open a terminal and run:
 .. code-block:: console
 
    sudo apt install pipx
+   pipx ensurepath
 
 Mac
 ~~~
@@ -31,7 +32,7 @@ then, install PIPX:
 .. code-block:: console
 
    brew install pipx
-
+   pipx ensurepath
 
 Windows
 ~~~~~~~
@@ -48,6 +49,7 @@ and then, install PIPX:
 .. code-block:: console
 
    scoop install pipx
+   pipx ensurepath
 
 RP Scripts install
 ------------------
