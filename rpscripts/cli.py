@@ -2,7 +2,7 @@
 
 import argparse
 
-from .config import VERSION
+from ._version import __version__
 
 from . import annotator
 from . import calculator
@@ -46,7 +46,7 @@ def main() -> None:
                 description = 'Rhythmic Partitioning Scripts.',
                 epilog = 'Further information available at https://github.com/msampaio/rpScripts')
 
-    main_parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + VERSION)
+    main_parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
 
     subparsers = main_parser.add_subparsers(
         title='Subcommands',

@@ -25,6 +25,7 @@
 - Add missing Tcontour data in Schumann's example.
 - Add missing information for Converter documentation.
 - Installation process.
+- Versioning structure.
 
 ## 2.2
 

@@ -26,6 +26,3 @@ if not os.path.exists(LATTICE_MAP_PATH):
     mpath = os.path.dirname(os.path.abspath(rpscripts.__file__))
     orig_dir = os.path.join(mpath, 'data')
     shutil.copy(os.path.join(orig_dir, lattice_map_filename), AUX_DIR)
-
-# Remove date and time for stable versions
-VERSION = 'dev-2024-11-10T07:34Z'
