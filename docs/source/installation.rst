@@ -3,7 +3,7 @@ Installation
 
 RP Scripts is a `Python-3 <https://www.python.org/>`_-based program. Python 3 non-users have to download and install it before running the following instructions (check `<https://www.python.org/downloads/>`_).
 
-The easiest way to install RP Scripts is using `PIPX <https://pipx.pypa.io/latest/>`_.
+The easiest way to install RP Scripts is using `PIPX <https://pipx.pypa.io/latest/>`_ and `GIT <https://git-scm.com/>`_.
 
 PIPX install
 ------------
@@ -50,6 +50,32 @@ and then, install PIPX:
 
    scoop install pipx
    pipx ensurepath
+
+GIT install
+-----------
+
+See GIT documentation at https://git-scm.com/book/en/v2/Getting-Started-Installing-Git.
+
+Linux
+~~~~~
+
+Debian-based distros users need to open a terminal and run:
+
+.. code-block:: console
+
+   sudo apt install git-all
+
+Mac
+~~~
+
+.. code-block:: console
+
+   brew install git
+
+Windows
+~~~~~~~
+
+Get the binary at https://git-scm.com/downloads/win and install.
 
 RP Scripts install
 ------------------
