@@ -1,5 +1,8 @@
-build: dependencies
-	python -m build
+build: lock
+	poetry build
+
+lock: dependencies
+	poetry lock
 
 dependencies:
 	pip install -U -r requirements.txt
@@ -8,6 +11,3 @@ dependencies:
 clean:
 	rm -rf build && \
 	find . -type f -name '*.pyc' -exec rm {} \;
-
-compile: dependencies clean
-	pyinstaller rps_compile.spec

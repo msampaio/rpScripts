@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rpscripts"
-version = "2.2"
+version = "2.3.dev1"
 description = "A calculator of the rhythmic partitioning of musical texture"
 authors = ["Marcos Sampaio"]
 license = "MIT"

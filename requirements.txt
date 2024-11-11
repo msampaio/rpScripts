@@ -6,6 +6,5 @@ music21
 networkx
 numpy
 pandas
-pyinstaller
 statsmodels
 tqdm
