@@ -1,38 +1,44 @@
 Installation
 ============
 
-RP Scripts is a `Python-3 <https://www.python.org/>`_-based program. Python 3 non-users have to download and install it before running the following instructions (check `<https://www.python.org/downloads/>`_).
+RP Scripts is a `Python-3 <https://www.python.org/>`_-based program. The easiest way to install RP Scripts is using the `PIPX <https://pipx.pypa.io/latest/>`_ package manager to get and install it from its source code from GitHub.
 
-The easiest way to install RP Scripts is using `PIPX <https://pipx.pypa.io/latest/>`_ and `GIT <https://git-scm.com/>`_.
+The installation process consists of:
 
-PIPX install
-------------
+- Install Python 3
+- Install an auxiliary package manager (homebrew for MacOS or scoop for Windows)
+- Install PIPX
+- Install GIT
+- Install RP Scripts
+- Install Graphviz
+
+Python 3
+--------
+
+To check Python 3 availability, open a terminal (power shell on Windows) and run the following command:
+
+.. code-block:: console
+
+   python --version
+
+To install Python 3, check its `documentation <https://docs.python.org/3/using/index.html>`_.
+
+Auxiliary package manager
+-------------------------
 
 Linux
 ~~~~~
 
-Debian-based distro users need to open a terminal and run the following commands:
+Most Linux distros have package managers. For instance, `apt` in Debian-based, `dnf` in RedHat, `pacman` in ArchLinux, etc.
 
-.. code-block:: console
-
-   sudo apt install pipx
-   pipx ensurepath
-
-Mac
-~~~
+MacOS
+~~~~~
 
 Mac users need to install the `Homebrew <https://brew.sh/>`_ package manager:
 
 .. code-block:: console
 
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-Then, install PIPX:
-
-.. code-block:: console
-
-   brew install pipx
-   pipx ensurepath
 
 Windows
 ~~~~~~~
@@ -44,29 +50,59 @@ Windows users need to open a PowerShell terminal and install the `Scoop <https:/
    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
    Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 
-And then, install PIPX:
+PIPX
+----
+
+PIPX installation consists of two steps: the program installation and the path configuration.
+
+Linux
+~~~~~
+
+Open a terminal and run the following commands:
+
+.. code-block:: console
+
+   sudo apt install pipx
+   pipx ensurepath
+
+MacOS
+~~~~~
+
+Open a terminal and run the following commands:
+
+.. code-block:: console
+
+   brew install pipx
+   pipx ensurepath
+
+Windows
+~~~~~~~
+
+Open a PowerShell and run the following commands:
 
 .. code-block:: console
 
    scoop install pipx
    pipx ensurepath
 
-GIT install
------------
+GIT
+---
 
 See GIT documentation at https://git-scm.com/book/en/v2/Getting-Started-Installing-Git.
 
 Linux
 ~~~~~
 
-Debian-based distro users need to open a terminal and run the following command:
+Open a terminal and run the following commands:
 
 .. code-block:: console
 
    sudo apt install git-all
 
-Mac
-~~~
+MacOS
+~~~~~
+
+Open a terminal and run the following commands:
 
 .. code-block:: console
 
@@ -77,8 +113,8 @@ Windows
 
 Get the binary at https://git-scm.com/downloads/win and install.
 
-RP Scripts install
-------------------
+RP Scripts
+----------
 
 The next step is to use PIPX to install RP Scripts.
 
@@ -94,8 +130,8 @@ For the development version:
 
    pipx install git+https://github.com/msampaio/rpScripts.git@dev
 
-Dependencies
-------------
+Graphviz
+--------
 
 The :doc:`programs/tclass` program needs `Graphviz <https://www.graphviz.org/>`_.
 
