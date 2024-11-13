@@ -1,7 +1,7 @@
 RP Scripts' documentation
 =========================
 
-RP Scripts is an open-source command-line program designed to extract rhythmic partitioning information from given digital music scores files, plot partitiogram and indexogram, and create annotated digital music scores files.
+RP Scripts is an open-source command-line program designed to extract rhythmic partitioning information from given digital music scores files, plot partitiogram and indexogram, and create annotated digital music scores files. RP Scripts is multiplatform. It works on Linux, MacOS, and Windows.
 
 This program reads MusicXML (compressed or not), and Kern files generating rhythmic partitioning data in JSON files and partitioning charts. It uses the `Music21 <https://mit.edu/music21>`_ library for score parsing and `Matplotlib <https://matplotlib.org>`_ for chart plotting.
 
