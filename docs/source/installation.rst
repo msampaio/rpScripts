@@ -11,7 +11,7 @@ PIPX install
 Linux
 ~~~~~
 
-Debian-based distros users need to open a terminal and run:
+Debian-based distro users need to open a terminal and run the following commands:
 
 .. code-block:: console
 
@@ -27,7 +27,7 @@ Mac users need to install the `Homebrew <https://brew.sh/>`_ package manager:
 
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-then, install PIPX:
+Then, install PIPX:
 
 .. code-block:: console
 
@@ -44,7 +44,7 @@ Windows users need to open a PowerShell terminal and install the `Scoop <https:/
    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
    Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 
-and then, install PIPX:
+And then, install PIPX:
 
 .. code-block:: console
 
@@ -59,7 +59,7 @@ See GIT documentation at https://git-scm.com/book/en/v2/Getting-Started-Installi
 Linux
 ~~~~~
 
-Debian-based distros users need to open a terminal and run:
+Debian-based distro users need to open a terminal and run the following command:
 
 .. code-block:: console
 
