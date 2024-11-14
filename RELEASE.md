@@ -1,6 +1,6 @@
 # Releases
 
-## Next release
+## 2.3
 
 ### Features added
 

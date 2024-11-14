@@ -14,8 +14,8 @@ sys.path.insert(0, path)
 project = 'RP Scripts'
 copyright = '2024, Marcos da Silva Sampaio'
 author = 'Marcos da Silva Sampaio'
-version = '2.2'
-release = '2.2'
+version = '2.3'
+release = '2.3'
 project_copyright = 'GPLv3'
 
 # -- General configuration ---------------------------------------------------

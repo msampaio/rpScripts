@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Next release
-------------
+Release 2.3 (released Nov 14, 2024)
+-----------------------------------
 
 Features added
 ~~~~~~~~~~~~~~
