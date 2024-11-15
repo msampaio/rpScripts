@@ -7,6 +7,7 @@
 ### Bug fixes
 
 - Fix the installation command in the documentation page.
+- Fix how to cite.
 
 ### Features added
 

@@ -8,6 +8,7 @@ Bugs fixed
 ~~~~~~~~~~
 
 - Fix the installation command in the documentation page.
+- Fix how to cite.
 
 Release 2.3 (released Nov 14, 2024)
 -----------------------------------
