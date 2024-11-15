@@ -1,13 +1,13 @@
 # Releases
 
-## Next release
-
-## 2.3
+## Release 2.3.1 (released Nov 15, 2024)
 
 ### Bug fixes
 
 - Fix the installation command in the documentation page.
 - Fix how to cite.
+
+## 2.3
 
 ### Features added
 

@@ -26,6 +26,6 @@ These following commands...
 
 ## How to cite
 
-Sampaio, Marcos da Silva. RP Scripts: Rhythmic Partitioning Scripts, release 2.3. Available at https://github.com/msampaio/rpScripts. Accessed on Nov 14, 2024, 2024.
+Sampaio, Marcos da Silva. RP Scripts: Rhythmic Partitioning Scripts, release 2.3.1. Available at https://github.com/msampaio/rpScripts. Accessed on Nov 15, 2024, 2024.
 
 [Bibtex](bibtex.bib)

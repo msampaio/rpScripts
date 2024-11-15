@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Next release
-------------
+Release 2.3.1 (released Nov 15, 2024)
+-------------------------------------
 
 Bugs fixed
 ~~~~~~~~~~
