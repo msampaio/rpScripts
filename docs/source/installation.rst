@@ -122,7 +122,7 @@ For the stable version:
 
 .. code-block:: console
 
-   pipx install https://github.com/msampaio/rpScripts.git
+   pipx install git+https://github.com/msampaio/rpScripts.git
 
 For the development version:
 

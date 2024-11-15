@@ -1,6 +1,12 @@
 # Releases
 
+## Next release
+
 ## 2.3
+
+### Bug fixes
+
+- Fix the installation command in the documentation page.
 
 ### Features added
 

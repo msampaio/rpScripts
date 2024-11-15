@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Next release
+------------
+
+Bugs fixed
+~~~~~~~~~~
+
+- Fix the installation command in the documentation page.
+
 Release 2.3 (released Nov 14, 2024)
 -----------------------------------
 
