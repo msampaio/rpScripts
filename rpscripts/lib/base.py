@@ -100,6 +100,7 @@ def clean_filename(filename: str) -> str:
         ('ü', 'u'),
     ]
 
+    filename = filename.translate ({ord(c): "-" for c in "!@#$%^&*()[]{};:,./<>?\\|`~-=_+"})
     filename = str(filename).lower()
 
     for a, b in PAIRS:
