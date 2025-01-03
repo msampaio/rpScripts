@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Release 2.3.2 (released Jan 3, 2025)
+-------------------------------------
+
+Bugs fixed
+~~~~~~~~~~
+
+- Fix special characters in filenames.
+
 Release 2.3.1 (released Nov 15, 2024)
 -------------------------------------
 
